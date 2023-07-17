@@ -1,19 +1,81 @@
-import { View, Text, Pressable, StyleSheet, StatusBar } from "react-native";
-import Input from "../../src/components/input";
+import { View, Text, Pressable, StyleSheet, StatusBar, Alert } from "react-native";
+import Input from "../components/input";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import * as SQLite from 'expo-sqlite';
+import { openDatabase } from "../function/openDatabase";
 
+
+// Opening/Creating a database and table in it 
+const db = openDatabase("expenses.db")
+try {
+  db.transaction((tx) => {
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT)',
+      [],
+      () => {
+        console.log('Table created successfully.');
+      },
+      (error) => {
+        console.log('Error creating table:', error);
+      }
+    );
+  });
+}
+catch (error) {
+  console.log('Error executing SQL statement:', error);
+}
+
+// Main component which will be called from outside
 const AddExpense = () => {
-  const [Category, setCategory] = useState("None");
+  const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
 
-  // Function to be executed once we get input from the user about the expense
+  // Function to be executed once we get input from the user about the expense/Inserting an expense record
   const Add = () => {
     console.log("Input 1:", Name);
     console.log("Input 2:", Amount);
     console.log("Input 3", Category);
-  };
+
+    // Checking if the user provided proper information, if true then adding it to expenses.db
+    if(!(Name === '' || Name == null || Amount == null || Category == '')) {
+      
+      // Check if amount entered is positive
+      if( Amount < 0) {
+        Alert.alert("Please enter proper amount.")
+        return
+      }
+
+
+      // Adding the transaction using an SQL query
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)',
+          [Name, Amount, Category],
+          (_, { rowsAffected, insertId }) => {
+            if (rowsAffected > 0) {
+              console.log("Expense record inserted with ID:", {insertId});
+            }
+          },
+          (_, error) => {
+            console.log("Error inserting expense record:", error);
+          }
+        );
+      });
+
+    // Clearing all inputs to null
+    setName('');
+    setAmount('');
+    setCategory('');
+
+    }
+    else {
+      Alert.alert("Please enter all the information properly.")
+    }
+  }
+
+  
 
   return (
     <View style={styles.container}>
@@ -44,6 +106,7 @@ const AddExpense = () => {
             onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
             style={styles.input}
           >
+            <Picker.Item label="Click to select" value='' enabled='false' />
             <Picker.Item label="Food" value="food" />
             <Picker.Item label="Rent" value="rent" />
             <Picker.Item label="Fuel" value="fuel" />

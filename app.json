@@ -1,5 +1,10 @@
 {
   "expo": {
+    "jsEngine": "hermes",
+    "ios": {
+      "jsEngine": "jsc",
+      "supportsTablet": true
+    },
     "name": "GastoCalc",
     "slug": "GastoCalc",
     "version": "1.0.0",
@@ -14,9 +19,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
