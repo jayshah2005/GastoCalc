@@ -1,29 +1,34 @@
-import { View, Text, Pressable, StyleSheet, StatusBar, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  StatusBar,
+  Alert,
+} from "react-native";
 import Input from "../components/input";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from "expo-sqlite";
 import { openDatabase } from "../function/openDatabase";
 
-
-// Opening/Creating a database and table in it 
-const db = openDatabase("expenses.db")
+// Opening/Creating a database and table in it
+const db = openDatabase("expenses.db");
 try {
   db.transaction((tx) => {
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT)',
+      "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT)",
       [],
       () => {
-        console.log('Table created successfully.');
+        console.log("Table created successfully.");
       },
       (error) => {
-        console.log('Error creating table:', error);
+        console.log("Error creating table:", error);
       }
     );
   });
-}
-catch (error) {
-  console.log('Error executing SQL statement:', error);
+} catch (error) {
+  console.log("Error executing SQL statement:", error);
 }
 
 // Main component which will be called from outside
@@ -39,23 +44,21 @@ const AddExpense = () => {
     console.log("Input 3", Category);
 
     // Checking if the user provided proper information, if true then adding it to expenses.db
-    if(!(Name === '' || Name == null || Amount == null || Category == '')) {
-      
+    if (!(Name === "" || Name == null || Amount == null || Category == "")) {
       // Check if amount entered is positive
-      if( Amount < 0) {
-        Alert.alert("Please enter proper amount.")
-        return
+      if (Amount < 0) {
+        Alert.alert("Please enter proper amount.");
+        return;
       }
 
-
       // Adding the transaction using an SQL query
-      db.transaction(tx => {
+      db.transaction((tx) => {
         tx.executeSql(
-          'INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)',
+          "INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)",
           [Name, Amount, Category],
           (_, { rowsAffected, insertId }) => {
             if (rowsAffected > 0) {
-              console.log("Expense record inserted with ID:", {insertId});
+              console.log("Expense record inserted with ID:", { insertId });
             }
           },
           (_, error) => {
@@ -64,18 +67,15 @@ const AddExpense = () => {
         );
       });
 
-    // Clearing all inputs to null
-    setName('');
-    setAmount('');
-    setCategory('');
-
-    }
+      // Clearing all inputs to null
+      setName("");
+      setAmount("");
+      setCategory("");
+    } 
     else {
-      Alert.alert("Please enter all the information properly.")
+      Alert.alert("Please enter all the information properly.");
     }
-  }
-
-  
+  };
 
   return (
     <View style={styles.container}>
@@ -104,9 +104,12 @@ const AddExpense = () => {
             // Updating category mutable variable everytime a new option is selected
             selectedValue={Category}
             onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-            style={styles.input}
+            style={[
+              styles.input,
+              Category === "" ? styles.placeholder : styles.picker,
+            ]}
           >
-            <Picker.Item label="Click to select" value='' enabled='false' />
+            <Picker.Item label="-----Click to select-----" value="" />
             <Picker.Item label="Food" value="food" />
             <Picker.Item label="Rent" value="rent" />
             <Picker.Item label="Fuel" value="fuel" />
@@ -163,5 +166,13 @@ const styles = StyleSheet.create({
     height: 40,
     width: 240,
     marginTop: 10,
+  },
+
+  // Style for the picker component
+  placeholder: {
+    color: "grey",
+  },
+  picker: {
+    color: "black",
   },
 });
