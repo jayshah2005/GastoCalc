@@ -124,8 +124,6 @@ const AddExpense = () => {
               return (<Picker.Item label={item} value={item} key={index}/>) 
           })}
 
-          <Picker.Item label="Miscellaneous" value="Miscellaneous" />
-
           </Picker>
 
         </View>
