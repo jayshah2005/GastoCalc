@@ -11,24 +11,28 @@ import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import * as SQLite from "expo-sqlite";
 import { openDatabase } from "../function/openDatabase";
+import { getCategory } from "../function/categoriesFetcher"
+
+
+let categories = getCategory()
 
 // Opening/Creating a database and table in it
-const db = openDatabase("expenses.db");
+const db = openDatabase("GastoCalc.db");
 try {
   db.transaction((tx) => {
     tx.executeSql(
       "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT)",
       [],
       () => {
-        console.log("Table created successfully.");
+        console.log("expenses table created successfully.");
       },
       (error) => {
-        console.log("Error creating table:", error);
+        console.log("Error creating expenses table:", error);
       }
     );
   });
 } catch (error) {
-  console.log("Error executing SQL statement:", error);
+  console.log("Error executing SQL statement in addExpense.js:", error);
 }
 
 // Main component which will be called from outside
@@ -77,9 +81,11 @@ const AddExpense = () => {
     }
   };
 
+  const [placeholderview, setPlaceholderview] = useState(true);
+
   return (
     <View style={styles.container}>
-      <Text>GastoCalc</Text>
+      
 
       <Input
         text={"Name Of Expense"}
@@ -108,13 +114,20 @@ const AddExpense = () => {
               styles.input,
               Category === "" ? styles.placeholder : styles.picker,
             ]}
+            onFocus={ () => setPlaceholderview(false) }
+            onBlur={ () => setPlaceholderview(true) }
           >
-            <Picker.Item label="-----Click to select-----" value="" />
-            <Picker.Item label="Food" value="food" />
-            <Picker.Item label="Rent" value="rent" />
-            <Picker.Item label="Fuel" value="fuel" />
-            <Picker.Item label="Miscellaneous" value="mics" />
+
+          {placeholderview && <Picker.Item label="-----Click to select-----" value="" />}
+
+          {categories.map((item, index) => {
+              return (<Picker.Item label={item} value={item} key={index}/>) 
+          })}
+
+          <Picker.Item label="Miscellaneous" value="Miscellaneous" />
+
           </Picker>
+
         </View>
       </View>
 
