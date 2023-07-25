@@ -34,7 +34,6 @@ function getCategory() {
     console.log("Error retrieving data from categories.db");
   }
 
-  // Checks if Miscellaneous is already in the array and if not adds it
   if (!category.includes("Miscellaneous")) {
     category.push("Miscellaneous");
   }

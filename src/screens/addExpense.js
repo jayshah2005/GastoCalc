@@ -11,17 +11,15 @@ import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import * as SQLite from "expo-sqlite";
 import { openDatabase } from "../function/openDatabase";
-import { getCategory } from "../function/categoriesFetcher"
-
-
-let categories = getCategory()
+import { getCategory } from "../function/categoriesFetcher";
+import { useEffect } from "react";
 
 // Opening/Creating a database and table in it
 const db = openDatabase("GastoCalc.db");
 try {
   db.transaction((tx) => {
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT)",
+      "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT, date DATETIME DEFAULT CURRENT_TIMESTAMP)",
       [],
       () => {
         console.log("expenses table created successfully.");
@@ -40,6 +38,19 @@ const AddExpense = () => {
   const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoryArray = await getCategory();
+        setCategories(categoryArray);
+      } catch (error) {
+        console.log("Error retrieving data from categories.db", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Function to be executed once we get input from the user about the expense/Inserting an expense record
   const Add = () => {
@@ -75,8 +86,7 @@ const AddExpense = () => {
       setName("");
       setAmount("");
       setCategory("");
-    } 
-    else {
+    } else {
       Alert.alert("Please enter all the information properly.");
     }
   };
@@ -85,8 +95,6 @@ const AddExpense = () => {
 
   return (
     <View style={styles.container}>
-      
-
       <Input
         text={"Name Of Expense"}
         placeholder={"What did you spend on?"}
@@ -114,18 +122,17 @@ const AddExpense = () => {
               styles.input,
               Category === "" ? styles.placeholder : styles.picker,
             ]}
-            onFocus={ () => setPlaceholderview(false) }
-            onBlur={ () => setPlaceholderview(true) }
+            onFocus={() => setPlaceholderview(false)}
+            onBlur={() => setPlaceholderview(true)}
           >
+            {placeholderview && (
+              <Picker.Item label="-----Click to select-----" value="" />
+            )}
 
-          {placeholderview && <Picker.Item label="-----Click to select-----" value="" />}
-
-          {categories.map((item, index) => {
-              return (<Picker.Item label={item} value={item} key={index}/>) 
-          })}
-
+            {categories.map((item, index) => {
+              return <Picker.Item label={item} value={item} key={index} />;
+            })}
           </Picker>
-
         </View>
       </View>
 
