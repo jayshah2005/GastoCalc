@@ -21,7 +21,7 @@ const Input = (props) => {
 
 export default Input;
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   input: {
     height: 40,
     width: 240,

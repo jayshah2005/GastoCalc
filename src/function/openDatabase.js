@@ -1,18 +1,12 @@
 import * as SQLite from "expo-sqlite";
 
 function openDatabase(dbName) {
+  let db;
   if (Platform.OS === "web") {
-    return {
-      transaction: () => {
-        return {
-          executeSql: () => {},
-        };
-      },
-    };
+    db = openDatabase({name: dbName, location: 'default'});
+  } else {
+  db = SQLite.openDatabase(dbName);
   }
-
-  const db = SQLite.openDatabase(dbName);
-
   return db;
 }
 

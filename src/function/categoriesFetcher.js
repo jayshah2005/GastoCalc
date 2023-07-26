@@ -1,6 +1,6 @@
 import { db } from "./openDatabase.js";
 
-let category = ["Food", "Rent", "Fuel"];
+let category = ["Food", "Rent", "Fuel", "Clothes", "Travel"];
 
 try {
   db.transaction((tx) => {

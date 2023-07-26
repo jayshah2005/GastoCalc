@@ -1,21 +1,20 @@
 import {
   View,
   Text,
-  Pressable,
   StyleSheet,
   StatusBar,
   Alert,
 } from "react-native";
 import Input from "../components/input";
+import SmallButton from "../components/smallButton";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import * as SQLite from "expo-sqlite";
-import { openDatabase } from "../function/openDatabase";
+import { db } from "../function/openDatabase";
 import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
 
+
 // Opening/Creating a database and table in it
-const db = openDatabase("GastoCalc.db");
 try {
   db.transaction((tx) => {
     tx.executeSql(
@@ -51,6 +50,13 @@ const AddExpense = () => {
     };
     fetchCategories();
   }, []);
+
+  // Function executed to clear input feilds when the user clicks on the reset button
+  const Reset = () => {
+    setName("");
+    setAmount("");
+    setCategory("");
+  }
 
   // Function to be executed once we get input from the user about the expense/Inserting an expense record
   const Add = () => {
@@ -137,10 +143,11 @@ const AddExpense = () => {
       </View>
 
       <View style={styles.buttonView}>
-        <Pressable style={styles.addButton} onPress={Add}>
-          <Text>ADD</Text>
-        </Pressable>
+        <SmallButton text={'ADD'} onPress={Add} color={'lightgreen'} underlayColor="#65E765" />
+        <SmallButton text={'Reset'} onPress={Reset} color={'lightgrey'} underlayColor="#B3B3B3" />
       </View>
+
+      
     </View>
   );
 };
@@ -152,18 +159,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: StatusBar.currentHeight,
   },
-  addButton: {
-    backgroundColor: "lightgreen",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 75,
-    height: 30,
-  },
-  buttonView: {
+
+  buttonView : {
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginBottom: 30,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    paddingBottom: 25
   },
 
   // Styles for picker tag which will eventually be transferred to a different file.
