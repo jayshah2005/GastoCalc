@@ -18,10 +18,15 @@ const styles = StyleSheet.create({
     addButton: {
         alignItems: "center",
         justifyContent: "center",
-        width: 80,
-        height: 30,
-      },
-      buttonView: {
+        width: 100, 
+        height: 40, 
+        shadowColor: "rgba(0, 0, 0, 0.2)",
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+    },
+    buttonView: {
         padding: 5
-      },
+    },
 })

@@ -1,21 +1,21 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import AddExpense from "./src/screens/addExpense";
 import HomeScreen from "./src/screens/homeScreen";
+import EditScreen from "./src/screens/editExpense"
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Input from "./src/components/input";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator()
 
 const App = () => {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Add Expense" component={AddExpense} />
-      </Tab.Navigator>
+      <Stack.Navigator>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name='Edit' component={EditScreen} />
+        <Stack.Screen name="AddExpense" component={AddExpense} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
