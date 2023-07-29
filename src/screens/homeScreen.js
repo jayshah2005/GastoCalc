@@ -25,7 +25,6 @@ const HomeScreen = ({ navigation }) => {
   const [expenses, setExpenses] = useState([]);
   const [dailyExpense, setDailyExpense] = useState([]);
   
-
   // Hook to get data from the database eachtime the screen comes in focus
   useFocusEffect(
     useCallback(() => {
@@ -71,14 +70,14 @@ const HomeScreen = ({ navigation }) => {
             }
           });
 
-          // Using groupedExpenses array to create a daily expense array which stores objects consisting of date and total expense of that day          
-          groupedDailyExpense.map((day) => {
-            let sum = 0;
-            day.data.map((expense) => {
-              sum = sum + parseFloat(expense.amount);
-            })
-            setDailyExpense((prevDailyExpense) => [...prevDailyExpense, { day: day.date, totalExpense: sum }]);
-          })
+          // Using groupedExpenses array to create a daily expense array which stores objects consisting of date and total expense of that day     
+          // groupedDailyExpense.map((day) => {
+          //   let sum = 0;
+          //   day.data.map((expense) => {
+          //     sum = sum + parseFloat(expense.amount);
+          //   })
+          //   setDailyExpense((prevDailyExpense) => [...prevDailyExpense, { day: day.date, totalExpense: sum }]);
+          // })
 
           //  Using groupedExpenses array to create a monthly expense array
           groupedDailyExpense.forEach((day) => {
@@ -108,10 +107,18 @@ const HomeScreen = ({ navigation }) => {
     }, [])
   )
 
+  // Function to calculate the total expense of a given day
+  const calculateTotalExpenseOfDay = (day) => {
+    const totalExpense = day.data.reduce((sum, data) => {
+      return sum + parseFloat(data.amount);
+    }, 0);
+    return totalExpense;
+  };
+
   // Render function to render items from the data
   const renderitem = ({ item }) => {
     return (
-      <TouchableHighlight activeOpacity={0.5} underlayColor='none' onPress={() => {navigation.navigate('Edit')}} hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }} >
+      <TouchableHighlight activeOpacity={0.5} underlayColor='none' onPress={() => {navigation.navigate('Edit', {item})}} hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }} >
 
         <View style={styles.listitem}>
 
@@ -132,14 +139,14 @@ const HomeScreen = ({ navigation }) => {
   // Render function to render header from the data
   const renderSectionHeader = ({ section }) => {
 
-    const totalExpense = dailyExpense.find((item) => item.day === section.date)?.totalExpense || 0;
+    const totalExpense = calculateTotalExpenseOfDay(section);
     const total = '₹' + totalExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
     return (
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionHeaderText}>{section.date}</Text>
         <Text style={[styles.sectionHeaderText]}>
-            Total: ₹ {total}
+            Total: {total}
           </Text>
       </View>
     );
@@ -157,9 +164,6 @@ const HomeScreen = ({ navigation }) => {
     )
   }
 
-  useEffect(() => {
-    
-  })
   const sectionLists = expenses.map((month) => {
 
     return (

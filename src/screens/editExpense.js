@@ -10,14 +10,16 @@ import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
+import { db } from "../function/openDatabase";
 
-const EditExpense = ({ navigation }) => {
+const EditExpense = ({ route, navigation }) => {
 
-  const [Category, setCategory] = useState("");
-  const [Name, setName] = useState("");
-  const [Amount, setAmount] = useState("");
+  const { item } = route.params;
+  const [Category, setCategory] = useState(item.category);
+  const [Name, setName] = useState(item.name);
+  const [Amount, setAmount] = useState((item.amount).toString());
   const [categories, setCategories] = useState([]);
-
+  
   useEffect(() => {
       const fetchCategories = async () => {
         try {
@@ -29,7 +31,46 @@ const EditExpense = ({ navigation }) => {
       };
       fetchCategories();
   }, []);
+  
+  const Delete = () => {
+    // Delete an expense in the data
+    console.log(item.date)
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM expenses WHERE date=(?)", 
+          [item.date],
+          () => {
+            console.log("Entry deleted successfully.");
+          },
+          (error) => {
+            console.log("Error deleting entery from expenses table:", error);
+          }
+        );
+      });
+      navigation.goBack()
+    } catch (error) {
+      console.log("Error while editing the data: ", error);
+    }
+  }
 
+  const edit = () => {
+    try{
+      db.transaction((tx) => {
+        tx.executeSql("UPDATE expenses SET name=(?), amount=(?), category=(?) WHERE date=(?)",
+        [Name, Amount, Category, item.date],
+        () => {
+          console.log("Changes made sucessfully")
+        }, 
+        (error) => {
+          console.log("Error occured: ",error)
+        })
+      })
+      navigation.goBack()
+    } catch(error) {
+      console.log("Could not update the data")
+    }
+  }
   
   const [placeholderview, setPlaceholderview] = useState(true);
 
@@ -52,7 +93,7 @@ const EditExpense = ({ navigation }) => {
   
         <View style={styles.inputContainer}>
           <Text style={styles.inputText}>Category Of Expense</Text>
-  
+
           <View style={styles.inputBorder}>
             <Picker
               // Updating category mutable variable everytime a new option is selected
@@ -73,12 +114,13 @@ const EditExpense = ({ navigation }) => {
                 return <Picker.Item label={item} value={item} key={index} />;
               })}
             </Picker>
+
           </View>
         </View>
   
         <View style={styles.buttonView}>
-          <SmallButton text={'Edit'} onPress={() => navigation.goBack()} color={'lightgreen'} underlayColor="#65E765" />
-          <SmallButton text={'Delete'} onPress={() => navigation.goBack()} color={'#FF1A1A'} underlayColor="#E60000" />
+          <SmallButton text={'Edit'} onPress={edit} color={'lightgreen'} underlayColor="#65E765" />
+          <SmallButton text={'Delete'} onPress={Delete} color={'#FF1A1A'} underlayColor="#E60000" />
         </View>
   
         

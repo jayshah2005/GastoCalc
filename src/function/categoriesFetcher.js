@@ -39,8 +39,6 @@ function getCategory() {
     category.push("Miscellaneous");
   }
 
-  console.log(JSON.stringify(category));
-
   return category;
 }
 
