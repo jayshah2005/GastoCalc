@@ -12,6 +12,7 @@ import {
 import { getExpenses } from "../function/expensesTable";
 import { useFocusEffect } from "@react-navigation/native";
 import { useEffect } from "react";
+import LoadingText from '../components/loadingText'
 
 const month = [
   "January",
@@ -32,6 +33,7 @@ const HomeScreen = ({ navigation }) => {
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable
   const [expenses, setExpenses] = useState([]);
   const [dailyExpense, setDailyExpense] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Hook to get data from the database eachtime the screen comes in focus
   useFocusEffect(
@@ -86,6 +88,8 @@ const HomeScreen = ({ navigation }) => {
           // })
 
           //  Using groupedExpenses array to create a monthly expense array
+
+
           groupedDailyExpense.forEach((day) => {
             let month = day.date.split(" ")[1] + day.date.split(" ")[2];
             let monthIndex = groupedMonthlyExpense.findIndex(
@@ -98,8 +102,10 @@ const HomeScreen = ({ navigation }) => {
               groupedMonthlyExpense.push({ month: month, Data: [day] });
             }
           });
+          console.log(groupedMonthlyExpense)
 
-          setExpenses(groupedMonthlyExpense);
+          setExpenses(groupedDailyExpense);
+          setIsLoading(false)
         } catch (error) {
           console.log("Error retrieving expenses and seprating it:", error);
         }
@@ -163,25 +169,20 @@ const HomeScreen = ({ navigation }) => {
     return <View style={styles.SectionSeparator}></View>;
   };
 
-  const sectionLists = expenses.map((month) => {
-    return (
-      <View key={month.month}>
-        <SectionList
-          key={month.month}
-          sections={month.Data}
-          keyExtractor={(item, index) => item.date + "-" + index}
-          renderItem={renderitem}
-          renderSectionHeader={renderSectionHeader}
-          ItemSeparatorComponent={itemSeparator}
-          SectionSeparatorComponent={SectionSeparator}
-        />
-      </View>
-    );
-  });
-
   return (
     <View style={styles.container}>
-      <View style={styles.sectionview}>{sectionLists}</View>
+
+      {isLoading ? <LoadingText /> : (
+      <View style={styles.sectionview}>
+        <SectionList
+            sections={expenses.reverse()}
+            keyExtractor={(item, index) => item.date + "-" + index}
+            renderItem={renderitem}
+            renderSectionHeader={renderSectionHeader}
+            ItemSeparatorComponent={itemSeparator}
+            SectionSeparatorComponent={SectionSeparator}
+          />
+      </View> )}
 
       <TouchableHighlight
         style={styles.button}
@@ -193,6 +194,7 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Add Expense</Text>
       </TouchableHighlight>
+
     </View>
   );
 };

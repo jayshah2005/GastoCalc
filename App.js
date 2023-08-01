@@ -25,10 +25,8 @@ const App = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-
-        <Tab.Screen name="Overview" component={Overview} /> 
         <Tab.Screen name="Expenses" component={Expenses} options={{headerShown: false}} /> 
-        
+        <Tab.Screen name="Overview" component={Overview} /> 
       </Tab.Navigator>
     </NavigationContainer>
   );

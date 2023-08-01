@@ -4,6 +4,7 @@ import Svg, { Circle, Rect } from "react-native-svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpenses } from "../function/expensesTable";
 import { getCategory } from "../function/categoriesFetcher";
+import LoadingText from "./loadingText";
 
 // Convert a string into a hex color code
 const stringToHex = (str) => {
@@ -33,6 +34,8 @@ const DonutGraph = () => {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const moneysign = '₹';
+
+    const rawData = getExpenses()
 
 
     useFocusEffect(
@@ -79,7 +82,7 @@ const DonutGraph = () => {
             };
 
             fetchData();
-        }, [isLoading])
+        }, [rawData])
     );
 
     const visualdata = categoryData.map((category, index) => {
@@ -124,11 +127,11 @@ const DonutGraph = () => {
                         <Svg viewBox={`0 0 ${size} ${size}`} height={size} width={size}>
                             {visualdata}
                         </Svg>
-                        <Text style={styles.graphtitle}>Expenses Based On Category</Text>
+                        <Text style={styles.graphtitle}>Expenses Based On Category </Text>
                     </View>
                 ) : (
                     // Show loading indicator or any other UI while waiting for data
-                    <Text>Loading...</Text>
+                    <Text style={{flex: 1, textAlign: 'center'}} >Loading...</Text>
                 )}   
         </View>
     );
