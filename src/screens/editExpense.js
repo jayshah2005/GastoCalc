@@ -2,7 +2,8 @@ import {
   View,
   Text,
   StyleSheet,
-  StatusBar
+  StatusBar,
+  Alert
 } from "react-native";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
@@ -31,10 +32,24 @@ const EditExpense = ({ route, navigation }) => {
       };
       fetchCategories();
   }, []);
+
+  const showAlert = () => {
+    Alert.alert('Alert Title', 'My Alert Msg', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style:'cancel'
+      },
+      {
+        text: 'OK', 
+        onPress: Delete,
+        style:'destructive'
+      }
+    ]);
+  }
   
   const Delete = () => {
     // Delete an expense in the data
-    console.log(item.date)
     try {
       db.transaction((tx) => {
         tx.executeSql(
@@ -120,7 +135,7 @@ const EditExpense = ({ route, navigation }) => {
   
         <View style={styles.buttonView}>
           <SmallButton text={'Edit'} onPress={edit} color={'lightgreen'} underlayColor="#65E765" />
-          <SmallButton text={'Delete'} onPress={Delete} color={'#FF1A1A'} underlayColor="#E60000" />
+          <SmallButton text={'Delete'} onPress={showAlert} color={'#FF1A1A'} underlayColor="#E60000" />
         </View>
   
         
