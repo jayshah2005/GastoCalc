@@ -49,62 +49,32 @@ const HomeScreen = ({ navigation }) => {
           temp = rawData.map((data) => {
             const key = new Date(data.date);
             return {
-              date:
-                key.getDate() +
-                "th " +
-                month[key.getMonth()] +
-                " " +
-                key.getFullYear(),
+              month: month[key.getMonth()] + " " + key.getFullYear(),
               data: [data],
             };
           });
 
           // Using the temp array to create groupedExpenses where we are storeing data of expenses of each day together
           temp.forEach((piece) => {
-            let datePresent = false;
+            console.log(piece)
+            let monthPresent = false;
             let index;
 
-            for (index = 0; index < groupedDailyExpense.length; index++) {
-              if (groupedDailyExpense[index].date === piece.date) {
-                datePresent = true;
+            for (index = 0; index < groupedMonthlyExpense.length; index++) {
+              if (groupedMonthlyExpense[index].month === piece.month) {
+                monthPresent = true;
                 break;
               }
             }
 
-            if (datePresent) {
-              groupedDailyExpense[index].data.push(piece.data[0]);
+            if (monthPresent) {
+              groupedMonthlyExpense[index].data.push(piece.data[0]);
             } else {
-              groupedDailyExpense.push(piece);
+              groupedMonthlyExpense.push(piece);
             }
           });
 
-          // Using groupedExpenses array to create a daily expense array which stores objects consisting of date and total expense of that day
-          // groupedDailyExpense.map((day) => {
-          //   let sum = 0;
-          //   day.data.map((expense) => {
-          //     sum = sum + parseFloat(expense.amount);
-          //   })
-          //   setDailyExpense((prevDailyExpense) => [...prevDailyExpense, { day: day.date, totalExpense: sum }]);
-          // })
-
-          //  Using groupedExpenses array to create a monthly expense array
-
-
-          groupedDailyExpense.forEach((day) => {
-            let month = day.date.split(" ")[1] + day.date.split(" ")[2];
-            let monthIndex = groupedMonthlyExpense.findIndex(
-              (item) => item.month === month
-            );
-
-            if (monthIndex !== -1) {
-              groupedMonthlyExpense[monthIndex].Data.push(day);
-            } else {
-              groupedMonthlyExpense.push({ month: month, Data: [day] });
-            }
-          });
-          console.log(groupedMonthlyExpense)
-
-          setExpenses(groupedDailyExpense);
+          setExpenses(groupedMonthlyExpense.reverse());
           setIsLoading(false)
         } catch (error) {
           console.log("Error retrieving expenses and seprating it:", error);
@@ -116,8 +86,8 @@ const HomeScreen = ({ navigation }) => {
   );
 
   // Function to calculate the total expense of a given day
-  const calculateTotalExpenseOfDay = (day) => {
-    const totalExpense = day.data.reduce((sum, data) => {
+  const calculateTotalExpenseOfMonth = (month) => {
+    const totalExpense = month.data.reduce((sum, data) => {
       return sum + parseFloat(data.amount);
     }, 0);
     return totalExpense;
@@ -149,13 +119,13 @@ const HomeScreen = ({ navigation }) => {
 
   // Render function to render header from the data
   const renderSectionHeader = ({ section }) => {
-    const totalExpense = calculateTotalExpenseOfDay(section);
+    const totalExpense = calculateTotalExpenseOfMonth(section);
     const total =
       "₹" + totalExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return (
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionHeaderText}>{section.date}</Text>
+        <Text style={styles.sectionHeaderText}>{section.month}</Text>
         <Text style={[styles.sectionHeaderText]}>Total: {total}</Text>
       </View>
     );
@@ -175,7 +145,7 @@ const HomeScreen = ({ navigation }) => {
       {isLoading ? <LoadingText /> : (
       <View style={styles.sectionview}>
         <SectionList
-            sections={expenses.reverse()}
+            sections={expenses}
             keyExtractor={(item, index) => item.date + "-" + index}
             renderItem={renderitem}
             renderSectionHeader={renderSectionHeader}
@@ -197,6 +167,7 @@ const HomeScreen = ({ navigation }) => {
 
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
@@ -264,3 +235,4 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
