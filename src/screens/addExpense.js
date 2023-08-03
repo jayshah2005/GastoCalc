@@ -33,7 +33,7 @@ try {
 }
 
 // Main component which will be called from outside
-const AddExpense = () => {
+const AddExpense = ({navigation}) => {
   const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
@@ -60,9 +60,6 @@ const AddExpense = () => {
 
   // Function to be executed once we get input from the user about the expense/Inserting an expense record
   const Add = () => {
-    console.log("Input 1:", Name);
-    console.log("Input 2:", Amount);
-    console.log("Input 3", Category);
 
     // Checking if the user provided proper information, if true then adding it to expenses.db
     if (!(Name === "" || Name == null || Amount == null || Category == "")) {
@@ -73,25 +70,26 @@ const AddExpense = () => {
       }
 
       // Adding the transaction using an SQL query
-      db.transaction((tx) => {
-        tx.executeSql(
-          "INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)",
-          [Name, Amount, Category],
-          (_, { rowsAffected, insertId }) => {
-            if (rowsAffected > 0) {
-              console.log("Expense record inserted with ID:", { insertId });
+      try {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)",
+            [Name, Amount, Category],
+            (_, { rowsAffected, insertId }) => {
+              if (rowsAffected > 0) {
+                console.log("Expense record inserted with ID:", { insertId });
+              }
+            },
+            (_, error) => {
+              console.log("Error inserting expense record:", error);
             }
-          },
-          (_, error) => {
-            console.log("Error inserting expense record:", error);
-          }
-        );
-      });
+          );
+        });
+      } catch(error) {
+        console.log('Error adding data: ', error)
+      }
 
-      // Clearing all inputs to null
-      setName("");
-      setAmount("");
-      setCategory("");
+      navigation.goBack()
     } else {
       Alert.alert("Please enter all the information properly.");
     }

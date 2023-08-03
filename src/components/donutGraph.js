@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import Svg, { Circle, Rect } from "react-native-svg";
 import { useFocusEffect } from "@react-navigation/native";
-import { getExpenses } from "../function/expensesTable";
+import { getExpensesOfMonth } from "../function/expensesTable";
 import { getCategory } from "../function/categoriesFetcher";
 import LoadingText from "./loadingText";
 
@@ -34,8 +34,23 @@ const DonutGraph = () => {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const moneysign = '₹';
+    const date = new Date()
+    const month = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
 
-    const rawData = getExpenses()
+    const rawData = getExpensesOfMonth(date.getMonth() + 1)
 
 
     useFocusEffect(
@@ -49,9 +64,8 @@ const DonutGraph = () => {
                         color: stringToHex(category),
                     }));
 
-                    const rawData = await getExpenses();
+                    const rawData = await getExpensesOfMonth(date.getMonth() + 1);
                     let sum = 0;
-
                     rawData.forEach((expense) => {
                         const index = temp.findIndex(
                             (item) => item.category === expense.category
@@ -117,17 +131,20 @@ const DonutGraph = () => {
     return (
         <View style={styles.container}>
             <View style={{flex: 1}}>
-                <View style={styles.categoryData}>
+                <View>
                     {textdata}
                 </View>
             </View>
                 {!isLoading ? (
                     // Show the donut graph
-                    <View>
+                    <View style={{flex: 1}}>
                         <Svg viewBox={`0 0 ${size} ${size}`} height={size} width={size}>
                             {visualdata}
                         </Svg>
-                        <Text style={styles.graphtitle}>Expenses Based On Category </Text>
+                        <Text style={styles.totalText}>
+                            Total: {moneysign} {totalexpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        </Text> 
+                        <Text style={styles.graphtitle}>Expenses Based On Category({month[date.getMonth()] + ' ' + date.getFullYear()})</Text>
                     </View>
                 ) : (
                     // Show loading indicator or any other UI while waiting for data
@@ -154,9 +171,13 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingTop: 20,
         fontSize: 15,
-        fontWeight: '700',
+        fontWeight: 'bold',
     },
-    categoryData: {
+    totalText: {
+        fontWeight: "bold",
+        fontSize: 15,
+        color: "#394867",
+        textAlign: 'center',
         
     },
 });

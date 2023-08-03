@@ -34,6 +34,7 @@ const HomeScreen = ({ navigation }) => {
   const [expenses, setExpenses] = useState([]);
   const [dailyExpense, setDailyExpense] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const rawData = getExpenses()
 
   // Hook to get data from the database eachtime the screen comes in focus
   useFocusEffect(
@@ -56,7 +57,7 @@ const HomeScreen = ({ navigation }) => {
 
           // Using the temp array to create groupedExpenses where we are storeing data of expenses of each day together
           temp.forEach((piece) => {
-            console.log(piece)
+
             let monthPresent = false;
             let index;
 
@@ -74,6 +75,8 @@ const HomeScreen = ({ navigation }) => {
             }
           });
 
+          groupedMonthlyExpense.map((month) => {month.data.reverse()})
+
           setExpenses(groupedMonthlyExpense.reverse());
           setIsLoading(false)
         } catch (error) {
@@ -82,7 +85,7 @@ const HomeScreen = ({ navigation }) => {
       };
 
       fetchdata();
-    }, [])
+    }, [rawData])
   );
 
   // Function to calculate the total expense of a given day
