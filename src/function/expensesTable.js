@@ -25,9 +25,9 @@ const getExpenses = () => {
 const getExpensesOfMonth = (inputmonth) => {
   const date = new Date();
   const year = date.getFullYear();
-  const month = String(inputmonth).padStart(2, '0'); // Add leading zero if month is single-digit
+  const month = String(inputmonth).padStart(2, "0"); // Add leading zero if month is single-digit
   const startDate = year + `-` + month + `-01 00:00:00`;
-  const endDate = year + `-` + month + `-31 00:00:00`;; 
+  const endDate = year + `-` + month + `-31 00:00:00`;
 
   return new Promise((resolve, reject) => {
     try {
@@ -53,8 +53,8 @@ const getExpensesOfMonth = (inputmonth) => {
 const getExpensesOfYear = () => {
   const date = new Date();
   const year = date.getFullYear();
-  const startDate = year + `-` + '00' + `-01 00:00:00`;
-  const endDate = year + `-` + '00' + `-31 00:00:00`;; 
+  const startDate = year + `-` + "00" + `-01 00:00:00`;
+  const endDate = year + `-` + "00" + `-31 00:00:00`;
 
   return new Promise((resolve, reject) => {
     try {

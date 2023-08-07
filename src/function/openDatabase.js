@@ -3,9 +3,9 @@ import * as SQLite from "expo-sqlite";
 function openDatabase(dbName) {
   let db;
   if (Platform.OS === "web") {
-    db = openDatabase({name: dbName, location: 'default'});
+    db = openDatabase({ name: dbName, location: "default" });
   } else {
-  db = SQLite.openDatabase(dbName);
+    db = SQLite.openDatabase(dbName);
   }
 
   // Creating or opening a table to store expenses.
@@ -26,12 +26,11 @@ function openDatabase(dbName) {
     console.log("Error executing SQL statement in addExpense.js:", error);
   }
 
-
   // Creating or opening a table to store recurring expenses.
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS rexpenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT, startdate DATETIME DEFAULT CURRENT_TIMESTAMP, recurrencedate TEXT, repeattype TEXT);",
+        "CREATE TABLE IF NOT EXISTS rexpenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT, startdate DATETIME DEFAULT CURRENT_TIMESTAMP, recurrencedate TEXT, recurringInterval TEXT);",
         [],
         () => {
           console.log("rexpenses table created successfully.");
@@ -58,14 +57,15 @@ function openDatabase(dbName) {
             (_, result) => {
               const { rows } = result;
               
-              const count = rows.item(0).count;
               if (rows.length === 0) {
                 // If the table is empty, insert initial categories
                 tx.executeSql(
-                  'INSERT INTO category (name) VALUES ("Food"),("Rent"),("Fuel"),("Miscellaneous"),("Clothes"), ("Travel");',
+                  'INSERT INTO category (name) VALUES ("Food"),("Clothes"),("Fuel"),("Travel"),("Rent"),("Savings"),("Miscellaneous");',
                   [],
                   () => {
-                    console.log("Category table created and prepopulated successfully.");
+                    console.log(
+                      "Category table created and prepopulated successfully."
+                    );
                   },
                   (error) => {
                     console.log("Error prepopulating category table:", error);
@@ -88,7 +88,7 @@ function openDatabase(dbName) {
   } catch (error) {
     console.log("Error executing SQL statement in category.js:", error);
   }
-  
+
   return db;
 }
 

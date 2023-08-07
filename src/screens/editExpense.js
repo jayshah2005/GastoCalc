@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  Alert
-} from "react-native";
+import { View, Text, StyleSheet, StatusBar, Alert } from "react-native";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
 import { useState } from "react";
@@ -14,59 +8,60 @@ import { useEffect } from "react";
 import { db } from "../function/openDatabase";
 
 const EditExpense = ({ route, navigation }) => {
-
   const { item } = route.params;
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
-  const [Amount, setAmount] = useState((item.amount).toString());
+  const [Amount, setAmount] = useState(item.amount.toString());
   const [categories, setCategories] = useState([]);
 
   // Used for hiding the bottom tabs
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {
-        display: "none"
-      }
+        display: "none",
+      },
     });
-    return () => navigation.getParent()?.setOptions({
-      tabBarStyle: undefined
-    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
   }, [navigation]);
-  
-  // Fetching categories  
+
+  // Fetching categories
   useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const categoryArray = await getCategory();
-          setCategories(categoryArray);
-        } catch (error) {
-          console.log("Error retrieving data from categories.db", error);
-        }
-      };
-      fetchCategories();
+    const fetchCategories = async () => {
+      try {
+        const categoryArray = await getCategory();
+        setCategories(categoryArray);
+      } catch (error) {
+        console.log("Error retrieving data from categories.db", error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   const showAlert = () => {
-    Alert.alert('Delete', 'Are you sure you want to delete this expense?', [
+    Alert.alert("Delete", "Are you sure you want to delete this expense?", [
       {
-        text: 'Cancel',
+        text: "Cancel",
         onPress: () => {},
-        style:'cancel'
+        style: "cancel",
       },
       {
-        text: 'OK', 
+        text: "OK",
         onPress: Delete,
-        style:'destructive'
-      }
+        style: "destructive",
+      },
     ]);
-  }
-  
+  };
+
   const Delete = () => {
+
     // Delete an expense in the data
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          "DELETE FROM expenses WHERE date=(?)", 
+          "DELETE FROM expenses WHERE date=(?)",
           [item.date],
           () => {
             console.log("Entry deleted successfully.");
@@ -76,127 +71,136 @@ const EditExpense = ({ route, navigation }) => {
           }
         );
       });
-      navigation.goBack()
+      navigation.goBack();
     } catch (error) {
       console.log("Error while editing the data: ", error);
     }
-  }
+  };
 
   const edit = () => {
-    try{
+    try {
       db.transaction((tx) => {
-        tx.executeSql("UPDATE expenses SET name=(?), amount=(?), category=(?) WHERE date=(?)",
-        [Name, Amount, Category, item.date],
-        () => {
-          console.log("Changes made sucessfully")
-        }, 
-        (error) => {
-          console.log("Error occured: ",error)
-        })
-      })
-      navigation.goBack()
-    } catch(error) {
-      console.log("Could not update the data")
+        tx.executeSql(
+          "UPDATE expenses SET name=(?), amount=(?), category=(?) WHERE date=(?)",
+          [Name, Amount, Category, item.date],
+          () => {
+            console.log("Changes made sucessfully");
+          },
+          (error) => {
+            console.log("Error occured: ", error);
+          }
+        );
+      });
+      navigation.goBack();
+    } catch (error) {
+      console.log("Could not update the data");
     }
-  }
-  
+  };
+
   const [placeholderview, setPlaceholderview] = useState(true);
 
   return (
-      <View style={styles.container}>
-        <Input
-          text={"Name Of Expense"}
-          placeholder={"What did you spend on?"}
-          multiline={false}
-          value={Name}
-          onChangeText={(text) => setName(text)}
-        />
-        <Input
-          text={"Expense Amount"}
-          placeholder={"₹ ??"}
-          inputMode={"numeric"}
-          value={Amount}
-          onChangeText={(text) => setAmount(text)}
-        />
-  
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputText}>Category Of Expense</Text>
+    <View style={styles.container}>
+      <Input
+        text={"Name Of Expense"}
+        placeholder={"What did you spend on?"}
+        multiline={false}
+        value={Name}
+        onChangeText={(text) => setName(text)}
+      />
+      <Input
+        text={"Expense Amount"}
+        placeholder={"₹ ??"}
+        inputMode={"numeric"}
+        value={Amount}
+        onChangeText={(text) => setAmount(text)}
+      />
 
-          <View style={styles.inputBorder}>
-            <Picker
-              // Updating category mutable variable everytime a new option is selected
-              selectedValue={Category}
-              onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-              style={[
-                styles.input,
-                Category === "" ? styles.placeholder : styles.picker,
-              ]}
-              onFocus={() => setPlaceholderview(false)}
-              onBlur={() => setPlaceholderview(true)}
-            >
-              {placeholderview && (
-                <Picker.Item label="-----Click to select-----" value="" />
-              )}
-  
-              {categories.map((item, index) => {
-                return <Picker.Item label={item} value={item} key={index} />;
-              })}
-            </Picker>
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputText}>Category Of Expense</Text>
 
-          </View>
+        <View style={styles.inputBorder}>
+          <Picker
+            // Updating category mutable variable everytime a new option is selected
+            selectedValue={Category}
+            onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
+            style={[
+              styles.input,
+              Category === "" ? styles.placeholder : styles.picker,
+            ]}
+            onFocus={() => setPlaceholderview(false)}
+            onBlur={() => setPlaceholderview(true)}
+          >
+            {placeholderview && (
+              <Picker.Item label="-----Click to select-----" value="" />
+            )}
+
+            {categories.map((item, index) => {
+              return <Picker.Item label={item} value={item} key={index} />;
+            })}
+          </Picker>
         </View>
-  
-        <View style={styles.buttonView}>
-          <SmallButton text={'Edit'} onPress={edit} color={'lightgreen'} underlayColor="#65E765" />
-          <SmallButton text={'Delete'} onPress={showAlert} color={'#FF1A1A'} underlayColor="#E60000" />
-        </View>
-  
-        
       </View>
-    );
+
+      <View style={styles.buttonView}>
+        <SmallButton
+          text={"Edit"}
+          onPress={edit}
+          color={"lightgreen"}
+          underlayColor="#65E765"
+        />
+        <SmallButton
+          text={"Delete"}
+          onPress={showAlert}
+          color={"#FF1A1A"}
+          underlayColor="#E60000"
+        />
+      </View>
+    </View>
+  );
 };
-  
+
 export default EditExpense;
 
 const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  marginTop: StatusBar.currentHeight,
+    flex: 1,
+    marginTop: StatusBar.currentHeight,
   },
 
-  buttonView : {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'flex-end',
-  flexDirection: 'row',
-  paddingBottom: 25
+  buttonView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    flexDirection: "row",
+    paddingBottom: 25,
   },
 
   // Styles for picker tag which will eventually be transferred to a different file.
   input: {
-  marginTop: -9,
+    marginTop: -9,
   },
   inputText: {
-  fontSize: 15,
-  alignItems: "baseline",
+    fontSize: 15,
+    alignItems: "baseline",
   },
   inputContainer: {
-  flexDirection: "column",
-  alignItems: "center",
-  marginLeft: 15,
+    flexDirection: "column",
+    alignItems: "center",
+    marginLeft: 15,
   },
   inputBorder: {
-  borderWidth: 1,
-  height: 40,
-  width: 240,
-  marginTop: 10,
+    borderWidth: 1,
+    height: 40,
+    width: 240,
+    marginTop: 10,
   },
 
   // Style for the picker component
   placeholder: {
-  color: "grey",
+    color: "grey",
   },
   picker: {
-  color: "black",
+    color: "black",
   },
-});   
+});

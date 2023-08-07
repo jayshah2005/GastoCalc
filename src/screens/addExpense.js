@@ -5,7 +5,7 @@ import {
   StatusBar,
   Alert,
   Switch,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
@@ -14,31 +14,37 @@ import { Picker } from "@react-native-picker/picker";
 import { db } from "../function/openDatabase";
 import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
-import { setRecurringDate, setRecurringExpense } from "../function/recurringExpenses";
+import {
+  setRecurringDate,
+  setRecurringExpense,
+} from "../function/recurringExpenses";
 
 // Main component which will be called from outside
-const AddExpense = ({navigation}) => {
+const AddExpense = ({ navigation }) => {
   const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
   const [categories, setCategories] = useState([]);
   const [toggleSwitch, setToggleSwitch] = useState(false);
-  const [recurringInterval, setRecurringInterval] = useState("")
+  const [recurringInterval, setRecurringInterval] = useState("");
 
-  useEffect(() => {setRecurringInterval(toggleSwitch ? "Daily" : "")}, [toggleSwitch])
+  useEffect(() => {
+    setRecurringInterval(toggleSwitch ? "Daily" : "");
+  }, [toggleSwitch]);
 
   // Used for hiding the bottom tabs
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {
-        display: "none"
-      }
+        display: "none",
+      },
     });
-    return () => navigation.getParent()?.setOptions({
-      tabBarStyle: undefined
-    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
   }, [navigation]);
-  
+
   // Fetching categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -57,11 +63,10 @@ const AddExpense = ({navigation}) => {
     setName("");
     setAmount("");
     setCategory("");
-  }
+  };
 
   // Function to be executed once we get input from the user about the expense/Inserting an expense record
   const Add = () => {
-
     // Checking if the user provided proper information, if true then adding it to expenses.db
     if (!(Name === "" || Name == null || Amount == null || Category == "")) {
       // Check if amount entered is positive
@@ -72,25 +77,22 @@ const AddExpense = ({navigation}) => {
 
       // Adding the transaction using an SQL query
       try {
-
         // Checks if the expense is set to be recurring, if it is then does the needfull
-        if(toggleSwitch) {
+        if (toggleSwitch) {
+          const date = new Date();
+          const recurrenceDate = setRecurringDate(recurringInterval, date);
 
-          const date = new Date()
-          let recurranceDate = setRecurringDate(recurringInterval, date);
+          let expense = {
+            Name: Name,
+            Amount: Amount,
+            Category: Category,
+            recurringInterval: recurringInterval,
+            recurrencedate: recurrenceDate,
+          };
 
-          if (recurringInterval === 'Daily') {
-              recurranceDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-          } else if (recurringInterval === 'Monthly') {
-              recurranceDate = new Date(date.getTime());
-              recurranceDate.setMonth(date.getMonth() + 1);
-          } else {
-              recurranceDate = new Date(date.getTime());
-              recurranceDate.setFullYear(date.getFullYear() + 1);
-          }
-
-          let expense = {Name: Name, Amount: Amount, Category: Category, recurringInterval: recurringInterval, recurranceDate: recurranceDate}
-          setRecurringExpense(expense)
+          console.log(expense)
+          
+          setRecurringExpense(expense);
         }
 
         db.transaction((tx) => {
@@ -107,17 +109,17 @@ const AddExpense = ({navigation}) => {
             }
           );
         });
-      } catch(error) {
-        console.log('Error adding data: ', error)
+      } catch (error) {
+        console.log("Error adding data: ", error);
       }
 
-      navigation.goBack()
+      navigation.goBack();
     } else {
       Alert.alert("Please enter all the information properly.");
     }
   };
 
-  console.log(recurringInterval)
+  console.log(recurringInterval);
 
   const [placeholderview, setPlaceholderview] = useState(true);
 
@@ -165,37 +167,47 @@ const AddExpense = ({navigation}) => {
 
         <View style={styles.switchContainer}>
           <Text style={styles.inputText}>Recuring Expense</Text>
-          <Switch 
-          thumbColor={toggleSwitch ? 'lightgreen' : 'white'}
-          onValueChange={() => setToggleSwitch(!toggleSwitch)}
-          value={toggleSwitch}/>
+          <Switch
+            thumbColor={toggleSwitch ? "lightgreen" : "white"}
+            onValueChange={() => setToggleSwitch(!toggleSwitch)}
+            value={toggleSwitch}
+          />
         </View>
 
         {toggleSwitch ? (
           <View style={styles.switchBorder}>
             <Picker
               selectedValue={recurringInterval}
-              onValueChange={(itemValue, itemIndex) => setRecurringInterval(itemValue)}
+              onValueChange={(itemValue, itemIndex) =>
+                setRecurringInterval(itemValue)
+              }
               style={styles.input}
-              >
-                <Picker.Item label="Daily" value={"Daily"} />
-                <Picker.Item label="Monthly" value={"Monthly"} />
-                <Picker.Item label="Yearly" value={"Yearly"} />
+            >
+              <Picker.Item label="Daily" value={"Daily"} />
+              <Picker.Item label="Monthly" value={"Monthly"} />
+              <Picker.Item label="Yearly" value={"Yearly"} />
+              <Picker.Item label="10sec" value={"10sec"} />
             </Picker>
           </View>
-
-        ): (
-          <View></View>)}   
+        ) : (
+          <View></View>
+        )}
       </View>
 
-      
-      
       <SafeAreaView style={styles.buttonView}>
-        <SmallButton text={'ADD'} onPress={Add} color={'lightgreen'} underlayColor="#65E765" />
-        <SmallButton text={'Reset'} onPress={Reset} color={'lightgrey'} underlayColor="#B3B3B3" />
+        <SmallButton
+          text={"ADD"}
+          onPress={Add}
+          color={"lightgreen"}
+          underlayColor="#65E765"
+        />
+        <SmallButton
+          text={"Reset"}
+          onPress={Reset}
+          color={"lightgrey"}
+          underlayColor="#B3B3B3"
+        />
       </SafeAreaView>
-
-      
     </SafeAreaView>
   );
 };
@@ -208,12 +220,12 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight,
   },
 
-  buttonView : {
+  buttonView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    paddingBottom: 25
+    justifyContent: "center",
+    alignItems: "flex-end",
+    flexDirection: "row",
+    paddingBottom: 25,
   },
 
   // Styles for picker tag which will eventually be transferred to a different file.
@@ -246,10 +258,10 @@ const styles = StyleSheet.create({
 
   // Styles for Toggle Switch
   switchContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flexGrow: 1,
-    alignItems: 'center',
-    paddingTop: 10
+    alignItems: "center",
+    paddingTop: 10,
   },
 
   switchBorder: {
@@ -257,5 +269,5 @@ const styles = StyleSheet.create({
     height: 40,
     width: 240,
     marginTop: 10,
-  }
+  },
 });

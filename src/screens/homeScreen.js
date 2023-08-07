@@ -12,7 +12,7 @@ import {
 import { getExpenses } from "../function/expensesTable";
 import { useFocusEffect } from "@react-navigation/native";
 import { useEffect } from "react";
-import LoadingText from '../components/loadingText'
+import LoadingText from "../components/loadingText";
 import { updateRecurringExpenses } from "../function/recurringExpenses";
 
 const month = [
@@ -29,15 +29,15 @@ const month = [
   "November",
   "December",
 ];
-const moneysign = '₹';
+const moneysign = "₹";
+
 
 const HomeScreen = ({ navigation }) => {
-
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable
   const [expenses, setExpenses] = useState([]);
   const [dailyExpense, setDailyExpense] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const rawData = getExpenses()
+  const rawData = getExpenses();
 
   // Hook to get data from the database eachtime the screen comes in focus
   useFocusEffect(
@@ -60,7 +60,6 @@ const HomeScreen = ({ navigation }) => {
 
           // Using the temp array to create groupedExpenses where we are storeing data of expenses of each day together
           temp.forEach((piece) => {
-
             let monthPresent = false;
             let index;
 
@@ -78,10 +77,12 @@ const HomeScreen = ({ navigation }) => {
             }
           });
 
-          groupedMonthlyExpense.map((month) => {month.data.reverse()})
+          groupedMonthlyExpense.map((month) => {
+            month.data.reverse();
+          });
 
           setExpenses(groupedMonthlyExpense.reverse());
-          setIsLoading(false)
+          setIsLoading(false);
         } catch (error) {
           console.log("Error retrieving expenses and seprating it:", error);
         }
@@ -91,10 +92,6 @@ const HomeScreen = ({ navigation }) => {
     }, [rawData])
   );
 
-  useEffect(() => {
-    updateRecurringExpenses()
-  }, [])
-  
   // Function to calculate the total expense of a given day
   const calculateTotalExpenseOfMonth = (month) => {
     const totalExpense = month.data.reduce((sum, data) => {
@@ -118,7 +115,8 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.itemtext}>{item.name}</Text>
 
           <Text style={[styles.itemtext]}>
-            {moneysign} {item.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            {moneysign}{" "}
+            {item.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </Text>
 
           <Text style={styles.itemtext}>{item.category}</Text>
@@ -151,22 +149,23 @@ const HomeScreen = ({ navigation }) => {
 
   const ListHeaderComponent = () => {
     return (
-    <View style={styles.listitem}>
-      <Text style={styles.itemtext}>Name</Text>
+      <View style={styles.listitem}>
+        <Text style={styles.itemtext}>Name</Text>
 
-      <Text style={[styles.itemtext]}>Amount({moneysign})</Text>
+        <Text style={[styles.itemtext]}>Amount({moneysign})</Text>
 
-      <Text style={styles.itemtext}>Category</Text>
-    </View>
-  )
-  }
+        <Text style={styles.itemtext}>Category</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
-
-      {isLoading ? <LoadingText /> : (
-      <View style={styles.sectionview}>
-        <SectionList
+      {isLoading ? (
+        <LoadingText />
+      ) : (
+        <View style={styles.sectionview}>
+          <SectionList
             sections={expenses}
             keyExtractor={(item, index) => item.date + "-" + index}
             renderItem={renderitem}
@@ -175,7 +174,8 @@ const HomeScreen = ({ navigation }) => {
             SectionSeparatorComponent={SectionSeparator}
             ListHeaderComponent={ListHeaderComponent}
           />
-      </View> )}
+        </View>
+      )}
 
       <TouchableHighlight
         style={styles.button}
@@ -187,10 +187,8 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Add Expense</Text>
       </TouchableHighlight>
-
     </View>
   );
-
 };
 
 const styles = StyleSheet.create({
@@ -258,4 +256,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-

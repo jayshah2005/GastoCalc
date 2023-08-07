@@ -1,8 +1,10 @@
 import { StyleSheet } from "react-native";
+import { useEffect } from "react";
 import AddExpense from "./src/screens/addExpense";
 import HomeScreen from "./src/screens/homeScreen";
 import EditScreen from "./src/screens/editExpense";
 import Overview from "./src/screens/overview";
+import { updateRecurringExpenses } from "./src/function/recurringExpenses";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,6 +14,15 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function Expenses() {
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await updateRecurringExpenses();
+    }, 2000); 
+
+    return () => clearInterval(interval); // Clear the interval when the component unmounts
+  }, []);
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
