@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
         },
     },
     buttonView: {
-        padding: 5
+        padding: 5,
     },
 })

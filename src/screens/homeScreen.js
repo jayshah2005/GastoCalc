@@ -13,6 +13,7 @@ import { getExpenses } from "../function/expensesTable";
 import { useFocusEffect } from "@react-navigation/native";
 import { useEffect } from "react";
 import LoadingText from '../components/loadingText'
+import { updateRecurringExpenses } from "../function/recurringExpenses";
 
 const month = [
   "January",
@@ -28,8 +29,10 @@ const month = [
   "November",
   "December",
 ];
+const moneysign = '₹';
 
 const HomeScreen = ({ navigation }) => {
+
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable
   const [expenses, setExpenses] = useState([]);
   const [dailyExpense, setDailyExpense] = useState([]);
@@ -88,6 +91,10 @@ const HomeScreen = ({ navigation }) => {
     }, [rawData])
   );
 
+  useEffect(() => {
+    updateRecurringExpenses()
+  }, [])
+  
   // Function to calculate the total expense of a given day
   const calculateTotalExpenseOfMonth = (month) => {
     const totalExpense = month.data.reduce((sum, data) => {
@@ -111,7 +118,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.itemtext}>{item.name}</Text>
 
           <Text style={[styles.itemtext]}>
-            ₹ {item.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            {moneysign} {item.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </Text>
 
           <Text style={styles.itemtext}>{item.category}</Text>
@@ -124,7 +131,7 @@ const HomeScreen = ({ navigation }) => {
   const renderSectionHeader = ({ section }) => {
     const totalExpense = calculateTotalExpenseOfMonth(section);
     const total =
-      "₹" + totalExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      moneysign + totalExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return (
       <View style={styles.sectionHeader}>
@@ -142,6 +149,18 @@ const HomeScreen = ({ navigation }) => {
     return <View style={styles.SectionSeparator}></View>;
   };
 
+  const ListHeaderComponent = () => {
+    return (
+    <View style={styles.listitem}>
+      <Text style={styles.itemtext}>Name</Text>
+
+      <Text style={[styles.itemtext]}>Amount({moneysign})</Text>
+
+      <Text style={styles.itemtext}>Category</Text>
+    </View>
+  )
+  }
+
   return (
     <View style={styles.container}>
 
@@ -154,6 +173,7 @@ const HomeScreen = ({ navigation }) => {
             renderSectionHeader={renderSectionHeader}
             ItemSeparatorComponent={itemSeparator}
             SectionSeparatorComponent={SectionSeparator}
+            ListHeaderComponent={ListHeaderComponent}
           />
       </View> )}
 

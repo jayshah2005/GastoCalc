@@ -4,6 +4,8 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
+  Switch,
+  SafeAreaView
 } from "react-native";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
@@ -12,25 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import { db } from "../function/openDatabase";
 import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
-
-
-// Opening/Creating a database and table in it
-try {
-  db.transaction((tx) => {
-    tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount REAL, category TEXT, date DATETIME DEFAULT CURRENT_TIMESTAMP)",
-      [],
-      () => {
-        console.log("expenses table created successfully.");
-      },
-      (error) => {
-        console.log("Error creating expenses table:", error);
-      }
-    );
-  });
-} catch (error) {
-  console.log("Error executing SQL statement in addExpense.js:", error);
-}
+import { setRecurringDate, setRecurringExpense } from "../function/recurringExpenses";
 
 // Main component which will be called from outside
 const AddExpense = ({navigation}) => {
@@ -38,7 +22,24 @@ const AddExpense = ({navigation}) => {
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
   const [categories, setCategories] = useState([]);
+  const [toggleSwitch, setToggleSwitch] = useState(false);
+  const [recurringInterval, setRecurringInterval] = useState("")
 
+  useEffect(() => {setRecurringInterval(toggleSwitch ? "Daily" : "")}, [toggleSwitch])
+
+  // Used for hiding the bottom tabs
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: "none"
+      }
+    });
+    return () => navigation.getParent()?.setOptions({
+      tabBarStyle: undefined
+    });
+  }, [navigation]);
+  
+  // Fetching categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -71,9 +72,30 @@ const AddExpense = ({navigation}) => {
 
       // Adding the transaction using an SQL query
       try {
+
+        // Checks if the expense is set to be recurring, if it is then does the needfull
+        if(toggleSwitch) {
+
+          const date = new Date()
+          let recurranceDate = setRecurringDate(recurringInterval, date);
+
+          if (recurringInterval === 'Daily') {
+              recurranceDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+          } else if (recurringInterval === 'Monthly') {
+              recurranceDate = new Date(date.getTime());
+              recurranceDate.setMonth(date.getMonth() + 1);
+          } else {
+              recurranceDate = new Date(date.getTime());
+              recurranceDate.setFullYear(date.getFullYear() + 1);
+          }
+
+          let expense = {Name: Name, Amount: Amount, Category: Category, recurringInterval: recurringInterval, recurranceDate: recurranceDate}
+          setRecurringExpense(expense)
+        }
+
         db.transaction((tx) => {
           tx.executeSql(
-            "INSERT INTO expenses (Name, Amount, Category) VALUES (?, ?, ?)",
+            "INSERT INTO expenses (name, amount, category) VALUES (?, ?, ?)",
             [Name, Amount, Category],
             (_, { rowsAffected, insertId }) => {
               if (rowsAffected > 0) {
@@ -95,10 +117,12 @@ const AddExpense = ({navigation}) => {
     }
   };
 
+  console.log(recurringInterval)
+
   const [placeholderview, setPlaceholderview] = useState(true);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Input
         text={"Name Of Expense"}
         placeholder={"What did you spend on?"}
@@ -138,15 +162,41 @@ const AddExpense = ({navigation}) => {
             })}
           </Picker>
         </View>
-      </View>
 
-      <View style={styles.buttonView}>
-        <SmallButton text={'ADD'} onPress={Add} color={'lightgreen'} underlayColor="#65E765" />
-        <SmallButton text={'Reset'} onPress={Reset} color={'lightgrey'} underlayColor="#B3B3B3" />
+        <View style={styles.switchContainer}>
+          <Text style={styles.inputText}>Recuring Expense</Text>
+          <Switch 
+          thumbColor={toggleSwitch ? 'lightgreen' : 'white'}
+          onValueChange={() => setToggleSwitch(!toggleSwitch)}
+          value={toggleSwitch}/>
+        </View>
+
+        {toggleSwitch ? (
+          <View style={styles.switchBorder}>
+            <Picker
+              selectedValue={recurringInterval}
+              onValueChange={(itemValue, itemIndex) => setRecurringInterval(itemValue)}
+              style={styles.input}
+              >
+                <Picker.Item label="Daily" value={"Daily"} />
+                <Picker.Item label="Monthly" value={"Monthly"} />
+                <Picker.Item label="Yearly" value={"Yearly"} />
+            </Picker>
+          </View>
+
+        ): (
+          <View></View>)}   
       </View>
 
       
-    </View>
+      
+      <SafeAreaView style={styles.buttonView}>
+        <SmallButton text={'ADD'} onPress={Add} color={'lightgreen'} underlayColor="#65E765" />
+        <SmallButton text={'Reset'} onPress={Reset} color={'lightgrey'} underlayColor="#B3B3B3" />
+      </SafeAreaView>
+
+      
+    </SafeAreaView>
   );
 };
 
@@ -193,4 +243,19 @@ const styles = StyleSheet.create({
   picker: {
     color: "black",
   },
+
+  // Styles for Toggle Switch
+  switchContainer: {
+    flexDirection: 'row',
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingTop: 10
+  },
+
+  switchBorder: {
+    borderWidth: 1,
+    height: 40,
+    width: 240,
+    marginTop: 10,
+  }
 });

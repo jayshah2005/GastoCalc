@@ -8,8 +8,8 @@ const getExpenses = () => {
           "SELECT name, amount, category, date FROM expenses",
           [],
           (_, result) => {
-            const rows = result.rows._array;
-            resolve(rows); // Resolve the Promise with the retrieved data
+            const expenses = result.rows._array;
+            resolve(expenses); // Resolve the Promise with the retrieved data
           },
           (_, error) => {
             reject(error); // Reject the Promise if an error occurs

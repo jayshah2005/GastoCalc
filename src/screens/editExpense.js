@@ -20,7 +20,20 @@ const EditExpense = ({ route, navigation }) => {
   const [Name, setName] = useState(item.name);
   const [Amount, setAmount] = useState((item.amount).toString());
   const [categories, setCategories] = useState([]);
+
+  // Used for hiding the bottom tabs
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: "none"
+      }
+    });
+    return () => navigation.getParent()?.setOptions({
+      tabBarStyle: undefined
+    });
+  }, [navigation]);
   
+  // Fetching categories  
   useEffect(() => {
       const fetchCategories = async () => {
         try {
@@ -34,7 +47,7 @@ const EditExpense = ({ route, navigation }) => {
   }, []);
 
   const showAlert = () => {
-    Alert.alert('Alert Title', 'My Alert Msg', [
+    Alert.alert('Delete', 'Are you sure you want to delete this expense?', [
       {
         text: 'Cancel',
         onPress: () => {},

@@ -3,6 +3,8 @@ import { View, StyleSheet, Text } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpensesOfMonth } from "../function/expensesTable";
+import { getRecurringExpense, updateRecurringExpenses } from "../function/recurringExpenses";
+
 
 const currentDate = new Date() 
 const moneysign = '₹';
@@ -28,6 +30,10 @@ const Overview = () => {
                 // Calculate the total expense for the previous month using reduce
                 const prevTotalExpense = previousMonthData.reduce((total, expense) => total + expense.amount, 0);
                 setprevTotalExpenseOfMonth(prevTotalExpense);
+
+                // Getting recurring expenses and updating it
+                const rawData = await getRecurringExpense()
+
             } catch (error) {
                 console.log("Error fetching data in DonutGraph: ", error);
             }
@@ -36,7 +42,6 @@ const Overview = () => {
 
     }, []
     ))
-
 
     return(
         <View style={styles.container}>

@@ -31,14 +31,14 @@ const App = () => {
           options={{ 
             headerShown: false,
             tabBarActiveTintColor: "darkgreen",
-            tabBarIcon: ({color}) => (<MaterialCommunityIcons name="piggy-bank-outline" size={24} color={color} />)
+            tabBarIcon: ({color}) => (<MaterialCommunityIcons name="piggy-bank-outline" size={24} color={color} />),
           }}
         />
         <Tab.Screen name="Overview" 
         component={Overview} 
         options={{ 
           tabBarActiveTintColor: "darkgreen",
-          tabBarIcon: ({color}) => (<Feather name="pie-chart" size={24} color={color} />)
+          tabBarIcon: ({color}) => (<Feather name="pie-chart" size={24} color={color} />),
           }}/>
       </Tab.Navigator>
     </NavigationContainer>
