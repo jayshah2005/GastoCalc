@@ -7,13 +7,10 @@ import {
   StyleSheet,
   Dimensions,
   TouchableHighlight,
-  StatusBar,
 } from "react-native";
 import { getExpenses } from "../function/expensesTable";
 import { useFocusEffect } from "@react-navigation/native";
-import { useEffect } from "react";
 import LoadingText from "../components/loadingText";
-import { updateRecurringExpenses } from "../function/recurringExpenses";
 
 const month = [
   "January",
@@ -30,7 +27,6 @@ const month = [
   "December",
 ];
 const moneysign = "₹";
-
 
 const HomeScreen = ({ navigation }) => {
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable

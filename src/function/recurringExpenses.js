@@ -10,7 +10,7 @@ function setRecurringExpense(expense) {
           parseFloat(expense.Amount),
           expense.Category,
           expense.recurrencedate.toISOString(),
-          expense.recurringInterval
+          expense.recurringInterval,
         ],
         (_, { rowsAffected, insertId }) => {
           console.log("Expense record inserted with ID in rexpenses:", {
@@ -49,8 +49,6 @@ function getRecurringExpense() {
 }
 
 function setRecurringDate(recurringInterval, date) {
-
-
   let recurrenceDate;
 
   if (recurringInterval === "Daily") {
@@ -69,23 +67,29 @@ function setRecurringDate(recurringInterval, date) {
 }
 
 async function updateRecurringExpenses() {
-  
   const rawData = await getRecurringExpense();
   const date = new Date();
 
   await rawData.forEach((rexpense) => {
-    
     let expense = rexpense;
-    
+
     while (new Date(expense.recurrencedate) <= date) {
       try {
         db.transaction((tx) => {
           tx.executeSql(
             "INSERT INTO expenses (name, amount, category, date) VALUES (?, ?, ?, ?)",
-            [expense.name, expense.amount, expense.category, expense.recurrencedate],
+            [
+              expense.name,
+              expense.amount,
+              expense.category,
+              expense.recurrencedate,
+            ],
             (_, { rowsAffected, insertId }) => {
               if (rowsAffected > 0) {
-                console.log("Recurring Expense record inserted with ID:", insertId,);
+                console.log(
+                  "Recurring Expense record inserted with ID:",
+                  insertId
+                );
               }
             },
             (_, error) => {
@@ -94,8 +98,8 @@ async function updateRecurringExpenses() {
           );
         });
 
-        if(new Date(expense.recurrencedate) > date) {
-          break
+        if (new Date(expense.recurrencedate) > date) {
+          break;
         }
       } catch (error) {
         console.log("Error adding data: ", error);
@@ -128,7 +132,6 @@ async function updateRecurringExpenses() {
     } catch (error) {
       console.log("Could not update the data in rexpenses");
     }
-    
   });
 }
 

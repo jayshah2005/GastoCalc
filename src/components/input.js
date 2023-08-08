@@ -36,6 +36,5 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginLeft: 15,
   },
 });

@@ -56,7 +56,7 @@ function openDatabase(dbName) {
             [],
             (_, result) => {
               const { rows } = result;
-              
+
               if (rows.length === 0) {
                 // If the table is empty, insert initial categories
                 tx.executeSql(

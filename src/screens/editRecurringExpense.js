@@ -1,18 +1,29 @@
-import { View, Text, StyleSheet, StatusBar, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  StatusBar,
+  Alert,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
-import { useState } from "react";
-import { Picker } from "@react-native-picker/picker";
+import React, { useEffect, useState } from "react";
 import { getCategory } from "../function/categoriesFetcher";
-import { useEffect } from "react";
 import { db } from "../function/openDatabase";
+import { setRecurringDate } from "../function/recurringExpenses";
 
-const EditExpense = ({ route, navigation }) => {
+const EditRecurringExpense = ({ route, navigation }) => {
   const { item } = route.params;
+  console.log(item);
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
   const [Amount, setAmount] = useState(item.amount.toString());
   const [categories, setCategories] = useState([]);
+  const [recurringInterval, setRecurringInterval] = useState(
+    item.recurringInterval
+  );
 
   // Used for hiding the bottom tabs
   useEffect(() => {
@@ -60,8 +71,8 @@ const EditExpense = ({ route, navigation }) => {
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          "DELETE FROM expenses WHERE date=(?)",
-          [item.date],
+          "DELETE FROM rexpenses WHERE startdate=(?)",
+          [item.startdate],
           () => {
             console.log("Entry deleted successfully.");
           },
@@ -77,11 +88,20 @@ const EditExpense = ({ route, navigation }) => {
   };
 
   const edit = () => {
+    const date = new Date();
+    const recurrenceDate = setRecurringDate(recurringInterval, date);
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE expenses SET name=(?), amount=(?), category=(?) WHERE date=(?)",
-          [Name, Amount, Category, item.date],
+          "UPDATE rexpenses SET name=(?), amount=(?), category=(?), recurringInterval=(?), recurrencedate=(?) WHERE startdate=(?)",
+          [
+            Name,
+            Amount,
+            Category,
+            recurringInterval,
+            recurrenceDate.toISOString(),
+            item.startdate,
+          ],
           () => {
             console.log("Changes made sucessfully");
           },
@@ -96,10 +116,8 @@ const EditExpense = ({ route, navigation }) => {
     }
   };
 
-  const [placeholderview, setPlaceholderview] = useState(true);
-
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Input
         text={"Name Of Expense"}
         placeholder={"What did you spend on?"}
@@ -127,21 +145,32 @@ const EditExpense = ({ route, navigation }) => {
               styles.input,
               Category === "" ? styles.placeholder : styles.picker,
             ]}
-            onFocus={() => setPlaceholderview(false)}
-            onBlur={() => setPlaceholderview(true)}
           >
-            {placeholderview && (
-              <Picker.Item label="-----Click to select-----" value="" />
-            )}
-
             {categories.map((item, index) => {
               return <Picker.Item label={item} value={item} key={index} />;
             })}
           </Picker>
         </View>
+
+        <Text style={styles.inputText}>Recuring Expense</Text>
+
+        <View style={styles.inputBorder}>
+          <Picker
+            selectedValue={recurringInterval}
+            onValueChange={(itemValue, itemIndex) =>
+              setRecurringInterval(itemValue)
+            }
+            style={styles.input}
+          >
+            <Picker.Item label="Daily" value={"Daily"} />
+            <Picker.Item label="Monthly" value={"Monthly"} />
+            <Picker.Item label="Yearly" value={"Yearly"} />
+            <Picker.Item label="10sec" value={"10sec"} />
+          </Picker>
+        </View>
       </View>
 
-      <View style={styles.buttonView}>
+      <SafeAreaView style={styles.buttonView}>
         <SmallButton
           text={"Edit"}
           onPress={edit}
@@ -154,12 +183,10 @@ const EditExpense = ({ route, navigation }) => {
           color={"#FF1A1A"}
           underlayColor="#E60000"
         />
-      </View>
-    </View>
+      </SafeAreaView>
+    </SafeAreaView>
   );
 };
-
-export default EditExpense;
 
 const styles = StyleSheet.create({
   container: {
@@ -182,6 +209,7 @@ const styles = StyleSheet.create({
   inputText: {
     fontSize: 15,
     alignItems: "baseline",
+    padding: 5,
   },
   inputContainer: {
     flexDirection: "column",
@@ -201,4 +229,21 @@ const styles = StyleSheet.create({
   picker: {
     color: "black",
   },
+
+  // Styles for Toggle Switch
+  switchContainer: {
+    flexDirection: "row",
+    flexGrow: 1,
+    alignItems: "center",
+    paddingTop: 10,
+  },
+
+  switchBorder: {
+    borderWidth: 1,
+    height: 40,
+    width: 240,
+    marginTop: 10,
+  },
 });
+
+export default EditRecurringExpense;

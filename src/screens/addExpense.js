@@ -90,8 +90,8 @@ const AddExpense = ({ navigation }) => {
             recurrencedate: recurrenceDate,
           };
 
-          console.log(expense)
-          
+          console.log(expense);
+
           setRecurringExpense(expense);
         }
 
@@ -118,8 +118,6 @@ const AddExpense = ({ navigation }) => {
       Alert.alert("Please enter all the information properly.");
     }
   };
-
-  console.log(recurringInterval);
 
   const [placeholderview, setPlaceholderview] = useState(true);
 
@@ -239,7 +237,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginLeft: 15,
   },
   inputBorder: {
     borderWidth: 1,

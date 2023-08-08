@@ -23,8 +23,7 @@ const stringToHex = (str) => {
 };
 
 const DonutGraph = () => {
-
-  // State Hooks 
+  // State Hooks
   const [categoryData, setCategoryData] = useState([]);
   const [totalexpense, setTotalexpense] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +58,6 @@ const DonutGraph = () => {
   // Fetching data everytime screen comes in focus
   useFocusEffect(
     useCallback(() => {
-
       const fetchData = async () => {
         // Creating an array of all categories
         try {
