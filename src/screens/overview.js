@@ -5,8 +5,8 @@ import {
   Text,
   SectionList,
   TouchableHighlight,
+  Dimensions,
 } from "react-native";
-import { Dimensions } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpensesOfMonth } from "../function/expensesTable";
@@ -83,6 +83,10 @@ const Overview = ({ navigation }) => {
               temp.push({ recurrencedate: day, data: [rexpense] });
             }
           });
+
+          // Sort the temp array by date in descending order, so that the expense that is first due appears first
+          temp.sort((a, b) => b.date - a.date);
+
           setRecurringExpense(temp);
         } catch (error) {
           console.log("Error fetching data in DonutGraph: ", error);
@@ -93,7 +97,13 @@ const Overview = ({ navigation }) => {
   );
 
   const ComparisionText = () => (
-    <>
+    <View
+      style={{
+        width: Dimensions.get("window").width,
+        alignItems: "center",
+        paddingTop: 10,
+      }}
+    >
       {prevTotalExpenseOfMonth >= TotalExpenseOfMonth ? (
         prevTotalExpenseOfMonth == TotalExpenseOfMonth ? (
           <View>
@@ -117,7 +127,7 @@ const Overview = ({ navigation }) => {
           more than last month.
         </Text>
       )}
-    </>
+    </View>
   );
 
   // All render functions for the sectionlist
@@ -167,14 +177,14 @@ const Overview = ({ navigation }) => {
     <View style={styles.container}>
       {TotalExpenseOfMonth === 0 ? (
         <View>
-          <Text style={styles.graphabsence}>
+          <Text style={styles.absence}>
             Currently you have no expenses for this month
           </Text>
         </View>
       ) : (
         <>
-          <DonutGraph />
           <ComparisionText />
+          <DonutGraph />
         </>
       )}
 
@@ -187,13 +197,17 @@ const Overview = ({ navigation }) => {
             width: Dimensions.get("window").width,
           }}
         />
-        <SectionList
+        {recurringExpense.length > 0 ? (
+          <SectionList
           sections={recurringExpense}
           renderItem={renderitem}
           renderSectionHeader={renderSectionHeader}
           ItemSeparatorComponent={itemSeparator}
           SectionSeparatorComponent={SectionSeparator}
         />
+        ) : (
+          <View><Text style={styles.absence}>You currently have set no recurring expenses.</Text></View>
+         )}
       </View>
     </View>
   );
@@ -208,9 +222,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  graphabsence: {
+  absence: {
     flex: 1,
     verticalAlign: "middle",
+    alignSelf: 'center'
   },
 
   upcomingTitle: {

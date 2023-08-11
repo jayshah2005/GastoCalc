@@ -4,6 +4,7 @@ import { Text } from "react-native";
 const LoadingText = () => {
   const [loadingText, setLoadingText] = useState("Loading");
 
+  // Hook used for giving the effect of animation
   useEffect(() => {
     let loadingInterval = setInterval(() => {
       setLoadingText((prevText) => {

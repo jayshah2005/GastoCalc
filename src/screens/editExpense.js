@@ -3,8 +3,8 @@ import Input from "../components/input";
 import SmallButton from "../components/smallButton";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
+import { useCategoriesContext } from "../contextAPI/globalVariables";
 import { db } from "../function/openDatabase";
 
 const EditExpense = ({ route, navigation }) => {
@@ -12,7 +12,6 @@ const EditExpense = ({ route, navigation }) => {
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
   const [Amount, setAmount] = useState(item.amount.toString());
-  const [categories, setCategories] = useState([]);
 
   // Used for hiding the bottom tabs
   useEffect(() => {
@@ -28,17 +27,7 @@ const EditExpense = ({ route, navigation }) => {
   }, [navigation]);
 
   // Fetching categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categoryArray = await getCategory();
-        setCategories(categoryArray);
-      } catch (error) {
-        console.log("Error retrieving data from categories.db", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const categories = useCategoriesContext();
 
   const showAlert = () => {
     Alert.alert("Delete", "Are you sure you want to delete this expense?", [
@@ -96,8 +85,6 @@ const EditExpense = ({ route, navigation }) => {
     }
   };
 
-  const [placeholderview, setPlaceholderview] = useState(true);
-
   return (
     <View style={styles.container}>
       <Input
@@ -123,17 +110,8 @@ const EditExpense = ({ route, navigation }) => {
             // Updating category mutable variable everytime a new option is selected
             selectedValue={Category}
             onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-            style={[
-              styles.input,
-              Category === "" ? styles.placeholder : styles.picker,
-            ]}
-            onFocus={() => setPlaceholderview(false)}
-            onBlur={() => setPlaceholderview(true)}
+            style={[styles.input, styles.picker]}
           >
-            {placeholderview && (
-              <Picker.Item label="-----Click to select-----" value="" />
-            )}
-
             {categories.map((item, index) => {
               return <Picker.Item label={item} value={item} key={index} />;
             })}
@@ -195,9 +173,6 @@ const styles = StyleSheet.create({
   },
 
   // Style for the picker component
-  placeholder: {
-    color: "grey",
-  },
   picker: {
     color: "black",
   },

@@ -10,6 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { CategoriesProvider } from "./src/contextAPI/globalVariables";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,34 +45,40 @@ function SecondScreen() {
 const App = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "darkgreen",
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="piggy-bank-outline"
-                size={24}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="SecondScreen"
-          component={SecondScreen}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "darkgreen",
-            tabBarIcon: ({ color }) => (
-              <Feather name="pie-chart" size={24} color={color} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      <CategoriesProvider>
+
+        <Tab.Navigator>
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+              tabBarActiveTintColor: "darkgreen",
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  name="piggy-bank-outline"
+                  size={24}
+                  color={color}
+                />
+              ),
+            }}
+          />
+          
+          <Tab.Screen
+            name="OverviewTab"
+            component={SecondScreen}
+            options={{
+              headerShown: false,
+              tabBarActiveTintColor: "darkgreen",
+              tabBarIcon: ({ color }) => (
+                <Feather name="pie-chart" size={24} color={color} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+
+      </CategoriesProvider>
+      
     </NavigationContainer>
   );
 };

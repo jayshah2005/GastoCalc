@@ -6,25 +6,25 @@ import {
   Alert,
   Switch,
   SafeAreaView,
+  TouchableOpacity
 } from "react-native";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { db } from "../function/openDatabase";
-import { getCategory } from "../function/categoriesFetcher";
 import { useEffect } from "react";
 import {
   setRecurringDate,
   setRecurringExpense,
 } from "../function/recurringExpenses";
+import { useCategoriesContext } from "../contextAPI/globalVariables";
 
 // Main component which will be called from outside
 const AddExpense = ({ navigation }) => {
   const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
-  const [categories, setCategories] = useState([]);
   const [toggleSwitch, setToggleSwitch] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState("");
 
@@ -45,18 +45,7 @@ const AddExpense = ({ navigation }) => {
       });
   }, [navigation]);
 
-  // Fetching categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categoryArray = await getCategory();
-        setCategories(categoryArray);
-      } catch (error) {
-        console.log("Error retrieving data from categories.db", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const categories = useCategoriesContext();
 
   // Function executed to clear input feilds when the user clicks on the reset button
   const Reset = () => {
@@ -89,8 +78,6 @@ const AddExpense = ({ navigation }) => {
             recurringInterval: recurringInterval,
             recurrencedate: recurrenceDate,
           };
-
-          console.log(expense);
 
           setRecurringExpense(expense);
         }
@@ -164,12 +151,18 @@ const AddExpense = ({ navigation }) => {
         </View>
 
         <View style={styles.switchContainer}>
-          <Text style={styles.inputText}>Recuring Expense</Text>
+          <TouchableOpacity
+          onPress={() => setToggleSwitch(!toggleSwitch)}
+          style={styles.touchableSwitch}
+          activeOpacity={.7}
+          >
+          <Text style={[styles.inputText, {paddingTop: 13}]}>Recuring Expense</Text>
           <Switch
             thumbColor={toggleSwitch ? "lightgreen" : "white"}
             onValueChange={() => setToggleSwitch(!toggleSwitch)}
             value={toggleSwitch}
           />
+        </TouchableOpacity>
         </View>
 
         {toggleSwitch ? (
@@ -267,4 +260,8 @@ const styles = StyleSheet.create({
     width: 240,
     marginTop: 10,
   },
+
+  touchableSwitch: {
+    flexDirection: 'row',
+  }
 });

@@ -10,17 +10,15 @@ import { Picker } from "@react-native-picker/picker";
 import Input from "../components/input";
 import SmallButton from "../components/smallButton";
 import React, { useEffect, useState } from "react";
-import { getCategory } from "../function/categoriesFetcher";
 import { db } from "../function/openDatabase";
 import { setRecurringDate } from "../function/recurringExpenses";
+import { useCategoriesContext } from "../contextAPI/globalVariables";
 
 const EditRecurringExpense = ({ route, navigation }) => {
   const { item } = route.params;
-  console.log(item);
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
   const [Amount, setAmount] = useState(item.amount.toString());
-  const [categories, setCategories] = useState([]);
   const [recurringInterval, setRecurringInterval] = useState(
     item.recurringInterval
   );
@@ -39,17 +37,7 @@ const EditRecurringExpense = ({ route, navigation }) => {
   }, [navigation]);
 
   // Fetching categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categoryArray = await getCategory();
-        setCategories(categoryArray);
-      } catch (error) {
-        console.log("Error retrieving data from categories.db", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const categories = useCategoriesContext();
 
   const showAlert = () => {
     Alert.alert("Delete", "Are you sure you want to delete this expense?", [

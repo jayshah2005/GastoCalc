@@ -31,7 +31,6 @@ const moneysign = "₹";
 const HomeScreen = ({ navigation }) => {
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable
   const [expenses, setExpenses] = useState([]);
-  const [dailyExpense, setDailyExpense] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const rawData = getExpenses();
 
@@ -40,7 +39,6 @@ const HomeScreen = ({ navigation }) => {
     useCallback(() => {
       const fetchdata = async () => {
         let temp = [];
-        let groupedDailyExpense = [];
         let groupedMonthlyExpense = [];
 
         try {
@@ -147,13 +145,12 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View style={styles.listitem}>
         <Text style={styles.itemtext}>Name</Text>
-
         <Text style={[styles.itemtext]}>Amount({moneysign})</Text>
-
         <Text style={styles.itemtext}>Category</Text>
       </View>
     );
   };
+  
 
   return (
     <View style={styles.container}>

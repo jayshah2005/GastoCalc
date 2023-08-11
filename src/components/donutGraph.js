@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import Svg, { Circle, Rect } from "react-native-svg";
+import Svg, { Circle } from "react-native-svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpensesOfMonth } from "../function/expensesTable";
-import { getCategory } from "../function/categoriesFetcher";
-import LoadingText from "./loadingText";
+import { useCategoriesContext } from "../contextAPI/globalVariables";
 
 // Convert a string into a hex color code
 const stringToHex = (str) => {
@@ -23,6 +22,9 @@ const stringToHex = (str) => {
 };
 
 const DonutGraph = () => {
+  // Fetching categories
+  const category = useCategoriesContext();
+
   // State Hooks
   const [categoryData, setCategoryData] = useState([]);
   const [totalexpense, setTotalexpense] = useState(0);
@@ -61,7 +63,6 @@ const DonutGraph = () => {
       const fetchData = async () => {
         // Creating an array of all categories
         try {
-          const category = await getCategory();
           const temp = category.map((category) => ({
             category: category,
             amount: 0,
@@ -145,24 +146,25 @@ const DonutGraph = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View>{textdata}</View>
-      </View>
       {!isLoading ? (
-        // Show the donut graph
-        <View style={{ flex: 1 }}>
-          <Svg viewBox={`0 0 ${size} ${size}`} height={size} width={size}>
-            {visualdata}
-          </Svg>
-          <Text style={styles.totalText}>
-            Total: {moneysign}{" "}
-            {totalexpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </Text>
-          <Text style={styles.graphtitle}>
-            Expenses Based On Category(
-            {month[date.getMonth()] + " " + date.getFullYear()})
-          </Text>
-        </View>
+        <>
+          <View style={{ flex: 1 }}>
+            <View>{textdata}</View>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Svg viewBox={`0 0 ${size} ${size}`} height={size} width={size}>
+              {visualdata}
+            </Svg>
+            <Text style={styles.totalText}>
+              Total: {moneysign}{" "}
+              {totalexpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </Text>
+            <Text style={styles.graphtitle}>
+              Expenses Based On Category(
+              {month[date.getMonth()] + " " + date.getFullYear()})
+            </Text>
+          </View>
+        </>
       ) : (
         // Show loading indicator or any other UI while waiting for data
         <Text style={{ flex: 1, textAlign: "center" }}>Loading...</Text>

@@ -9,7 +9,7 @@
     "slug": "GastoCalc",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Final.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
