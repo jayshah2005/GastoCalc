@@ -40,7 +40,7 @@ const EditRecurringExpense = ({ route, navigation }) => {
   const categories = useCategoriesContext();
 
   const showAlert = () => {
-    Alert.alert("Delete", "Are you sure you want to delete this expense?", [
+    Alert.alert("Delete", "Are you sure you want to delete this recurring expense?", [
       {
         text: "Cancel",
         onPress: () => {},
@@ -151,12 +151,14 @@ const EditRecurringExpense = ({ route, navigation }) => {
             style={styles.input}
           >
             <Picker.Item label="Daily" value={"Daily"} />
+            <Picker.Item label="Weekly" value={"Weekly"} />
             <Picker.Item label="Monthly" value={"Monthly"} />
             <Picker.Item label="Yearly" value={"Yearly"} />
             <Picker.Item label="10sec" value={"10sec"} />
           </Picker>
         </View>
       </View>
+      <Text style={styles.note}>Note that any changes made to the recurring expense will only take effect on the next recurring date.</Text>
 
       <SafeAreaView style={styles.buttonView}>
         <SmallButton
@@ -232,6 +234,14 @@ const styles = StyleSheet.create({
     width: 240,
     marginTop: 10,
   },
+
+  note: {
+    color: 'red',
+    alignSelf: 'center',
+    paddingHorizontal: 65,
+    paddingTop: 20,
+    textAlign: 'center'
+  }
 });
 
 export default EditRecurringExpense;

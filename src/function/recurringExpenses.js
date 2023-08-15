@@ -61,6 +61,8 @@ function setRecurringDate(recurringInterval, date) {
     recurrenceDate.setFullYear(date.getFullYear() + 1);
   } else if (recurringInterval === "10sec") {
     recurrenceDate = new Date(date.getTime() + 10 * 1000);
+  } else if (recurringInterval === "Weekly") {
+    recurrenceDate = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000)
   }
 
   return recurrenceDate;
