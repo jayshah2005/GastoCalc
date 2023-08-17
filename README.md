@@ -4,7 +4,7 @@ GastoCalc is an App used for tracking expenses and getting a better idea of your
  
 ## Introduction
  
-I graduated from high school this year and will start my computer science degree at Brock University as an international student. For the first time, I am going to find a part-time job and live alone, away from my home. This means I need to be more conscious of my spending habits and keep track of my expenses. This thought process led me to make GastoCalc, an app used to do just that, as a part of my final project for CS50.
+My name is Jay Atul Shah. I am a high school graduate and, will be starting my computer science degree at Brock University as an international student this fall(2023). For the first time, I am going to find a part-time job and live alone, away from my home. This means I need to be more conscious of my spending habits and keep track of my expenses. This thought process led me to make GastoCalc, an app used to do just that, as a part of my final project for CS50.
  
 This app was created using the following resources:
  
