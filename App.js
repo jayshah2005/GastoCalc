@@ -26,7 +26,7 @@ function Home() {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Expenses" component={Expenses} />
+      <Stack.Screen name="Home" component={Expenses} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="AddExpense" component={AddExpense} />
     </Stack.Navigator>
@@ -49,11 +49,12 @@ const App = () => {
 
         <Tab.Navigator>
           <Tab.Screen
-            name="Home"
+            name="HomeScreen"
             component={Home}
             options={{
               headerShown: false,
               tabBarActiveTintColor: "darkgreen",
+              tabBarLabel: "Home",
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons
                   name="piggy-bank-outline"
@@ -65,11 +66,12 @@ const App = () => {
           />
           
           <Tab.Screen
-            name="OverviewTab"
+            name="OverviewScreen"
             component={SecondScreen}
             options={{
               headerShown: false,
               tabBarActiveTintColor: "darkgreen",
+              tabBarLabel: "Overview",
               tabBarIcon: ({ color }) => (
                 <Feather name="pie-chart" size={24} color={color} />
               ),

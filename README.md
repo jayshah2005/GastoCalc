@@ -10,8 +10,11 @@ This app was created using the following resources:
  
 - React Native, along with various third-party libraries
 - Sqlite is used for creating local storage inside the device.
- 
-### Video Demo: <URL HERE>
+- Figma and Canvas for the splash screen and app icon respectively.
+
+### .APK File Download: <https://link-target.net/220726/gastocalc-app> 
+
+### Video Demo: <https://youtu.be/V32zcLIk4EI>
  
  
 ## Set-up
@@ -62,3 +65,5 @@ A list of all the categories is displayed along with the total amount spent on t
 ### Edit Screen For Recurring Expense (screens/editRecurringExpense.js)
  
 This screen is the same as the addExpense screen, minus a few minor changes. Firstly, the switch component is no longer present since we are only editing recurring expenses through this screen. To access the screen, click on any recurring expense within the sectionlist in the overview screen. The screen also loads up with already-filled input fields from the item/expense selected.
+
+# This Was CS50!

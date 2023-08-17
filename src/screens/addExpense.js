@@ -178,7 +178,6 @@ const AddExpense = ({ navigation }) => {
               <Picker.Item label="Weekly" value={"Weekly"} />
               <Picker.Item label="Monthly" value={"Monthly"} />
               <Picker.Item label="Yearly" value={"Yearly"} />
-              <Picker.Item label="10sec" value={"10sec"} />
             </Picker>
           </View>
         ) : (
