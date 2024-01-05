@@ -11,6 +11,7 @@ import {
 import { getExpenses } from "../function/expensesTable";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingText from "../components/loadingText";
+import { useCurrencyContext } from "../contextAPI/globalVariables";
 
 const month = [
   "January",
@@ -26,9 +27,11 @@ const month = [
   "November",
   "December",
 ];
-const moneysign = "₹";
 
 const HomeScreen = ({ navigation }) => {
+
+  const moneysign = useCurrencyContext();
+  
   //Fetching data from expenses table in GastoCalc.db and optimizing it to make it more useable
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -4,10 +4,15 @@ import SmallButton from "../components/smallButton";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect } from "react";
-import { useCategoriesContext } from "../contextAPI/globalVariables";
+import { useCategoriesContext, useCurrencyContext } from "../contextAPI/globalVariables";
 import { db } from "../function/openDatabase";
 
 const EditExpense = ({ route, navigation }) => {
+
+  // Fetching all categories and currency being used
+  const moneysign = useCurrencyContext();
+  const categories = useCategoriesContext();
+
   const { item } = route.params;
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
@@ -25,9 +30,6 @@ const EditExpense = ({ route, navigation }) => {
         tabBarStyle: undefined,
       });
   }, [navigation]);
-
-  // Fetching categories
-  const categories = useCategoriesContext();
 
   const showAlert = () => {
     Alert.alert("Delete", "Are you sure you want to delete this expense?", [
@@ -96,7 +98,7 @@ const EditExpense = ({ route, navigation }) => {
       />
       <Input
         text={"Expense Amount"}
-        placeholder={"₹ ??"}
+        placeholder={moneysign + " ??"}
         inputMode={"numeric"}
         value={Amount}
         onChangeText={(text) => setAmount(text)}

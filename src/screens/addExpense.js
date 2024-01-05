@@ -18,10 +18,16 @@ import {
   setRecurringDate,
   setRecurringExpense,
 } from "../function/recurringExpenses";
-import { useCategoriesContext } from "../contextAPI/globalVariables";
+import { useCategoriesContext, useCurrencyContext } from "../contextAPI/globalVariables";
 
 // Main component which will be called from outside
 const AddExpense = ({ navigation }) => {
+
+  // Fetching all categories and currency being used
+  const moneysign = useCurrencyContext();
+  const categories = useCategoriesContext();
+
+
   const [Category, setCategory] = useState("");
   const [Name, setName] = useState("");
   const [Amount, setAmount] = useState("");
@@ -44,8 +50,6 @@ const AddExpense = ({ navigation }) => {
         tabBarStyle: undefined,
       });
   }, [navigation]);
-
-  const categories = useCategoriesContext();
 
   // Function executed to clear input feilds when the user clicks on the reset button
   const Reset = () => {
@@ -119,7 +123,7 @@ const AddExpense = ({ navigation }) => {
       />
       <Input
         text={"Expense Amount"}
-        placeholder={"₹ ??"}
+        placeholder={moneysign + " ??"}
         inputMode={"numeric"}
         value={Amount}
         onChangeText={(text) => setAmount(text)}

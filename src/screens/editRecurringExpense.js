@@ -12,9 +12,14 @@ import SmallButton from "../components/smallButton";
 import React, { useEffect, useState } from "react";
 import { db } from "../function/openDatabase";
 import { setRecurringDate } from "../function/recurringExpenses";
-import { useCategoriesContext } from "../contextAPI/globalVariables";
+import { useCategoriesContext, useCurrencyContext } from "../contextAPI/globalVariables";
 
 const EditRecurringExpense = ({ route, navigation }) => {
+
+  // Fetching all categories and currency being used
+  const moneysign = useCurrencyContext();
+  const categories = useCategoriesContext();
+
   const { item } = route.params;
   const [Category, setCategory] = useState(item.category);
   const [Name, setName] = useState(item.name);
@@ -22,7 +27,7 @@ const EditRecurringExpense = ({ route, navigation }) => {
   const [recurringInterval, setRecurringInterval] = useState(
     item.recurringInterval
   );
-
+  
   // Used for hiding the bottom tabs
   useEffect(() => {
     navigation.getParent()?.setOptions({
@@ -35,9 +40,6 @@ const EditRecurringExpense = ({ route, navigation }) => {
         tabBarStyle: undefined,
       });
   }, [navigation]);
-
-  // Fetching categories
-  const categories = useCategoriesContext();
 
   const showAlert = () => {
     Alert.alert("Delete", "Are you sure you want to delete this recurring expense?", [

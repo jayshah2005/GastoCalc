@@ -3,7 +3,8 @@ import { View, StyleSheet, Text } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpensesOfMonth } from "../function/expensesTable";
-import { useCategoriesContext } from "../contextAPI/globalVariables";
+import { useCategoriesContext, useCurrencyContext } from "../contextAPI/globalVariables";
+import LoadingText from "../components/loadingText"
 
 // Convert a string into a hex color code
 const stringToHex = (str) => {
@@ -22,8 +23,9 @@ const stringToHex = (str) => {
 };
 
 const DonutGraph = () => {
-  // Fetching categories
+  // Fetching categories and currency in use
   const category = useCategoriesContext();
+  const moneysign = useCurrencyContext();
 
   // State Hooks
   const [categoryData, setCategoryData] = useState([]);
@@ -37,7 +39,6 @@ const DonutGraph = () => {
   const center = size / 2;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const moneysign = "₹";
   const date = new Date();
   const month = [
     "January",
@@ -65,7 +66,7 @@ const DonutGraph = () => {
         try {
           const temp = category.map((category) => ({
             category: category,
-            amount: 0,
+            amount: 0.00,
             color: stringToHex(category),
           }));
 
@@ -83,8 +84,12 @@ const DonutGraph = () => {
             }
           });
 
+          // Making sure values only upto 2 decimal places are used
+          temp.forEach((index) => index.amount = index.amount.toFixed(2))
+
+          console.log(temp)
           setCategoryData(temp);
-          setTotalexpense(sum);
+          setTotalexpense(sum.toFixed(2));
 
           // Setting up start and end angle for components of donut graph
           let angle = 0;
@@ -167,7 +172,9 @@ const DonutGraph = () => {
         </>
       ) : (
         // Show loading indicator or any other UI while waiting for data
-        <Text style={{ flex: 1, textAlign: "center" }}>Loading...</Text>
+        <View>
+          <LoadingText />
+        </View>
       )}
     </View>
   );

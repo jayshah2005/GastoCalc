@@ -52,7 +52,8 @@ function setRecurringDate(recurringInterval, date) {
   let recurrenceDate;
 
   if (recurringInterval === "Daily") {
-    recurrenceDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+    recurrenceDate = new Date(date.getTime());
+    recurrenceDate.setDate(date.getDate() + 1)
   } else if (recurringInterval === "Monthly") {
     recurrenceDate = new Date(date.getTime());
     recurrenceDate.setMonth(date.getMonth() + 1);
@@ -60,7 +61,8 @@ function setRecurringDate(recurringInterval, date) {
     recurrenceDate = new Date(date.getTime());
     recurrenceDate.setFullYear(date.getFullYear() + 1);
   } else if (recurringInterval === "Weekly") {
-    recurrenceDate = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000)
+    recurrenceDate = new Date(date.getTime())
+    recurrenceDate.setDate(date.getDate() + 7)
   }
 
   return recurrenceDate;

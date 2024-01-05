@@ -11,9 +11,10 @@ import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { getExpensesOfMonth } from "../function/expensesTable";
 import { getRecurringExpense } from "../function/recurringExpenses";
+import { useCurrencyContext } from "../contextAPI/globalVariables";
 
 const currentDate = new Date();
-const moneysign = "₹";
+
 const month = [
   "January",
   "February",
@@ -35,6 +36,9 @@ const Overview = ({ navigation }) => {
   const [recurringExpense, setRecurringExpense] = useState([]);
 
   const rawData = getRecurringExpense();
+
+  // Fetching the currency to be used
+  const moneysign = useCurrencyContext();
 
   useFocusEffect(
     useCallback(() => {

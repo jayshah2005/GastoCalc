@@ -60,7 +60,7 @@ function openDatabase(dbName) {
               if (rows.length === 0) {
                 // If the table is empty, insert initial categories
                 tx.executeSql(
-                  'INSERT INTO category (name) VALUES ("Food"),("Clothes"),("Fuel"),("Travel"),("Rent"),("Savings"),("Miscellaneous");',
+                  'INSERT INTO category (name) VALUES ("Food"),("Grocerries"),("Fuel"),("Travel"),("Bills"),("Outing"),("Clothes"),("Rent"),("Miscellaneous");',
                   [],
                   () => {
                     console.log(

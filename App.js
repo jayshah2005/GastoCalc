@@ -10,7 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
-import { CategoriesProvider } from "./src/contextAPI/globalVariables";
+import { CategoriesProvider, CurrencyProvider } from "./src/contextAPI/globalVariables";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,39 +46,41 @@ const App = () => {
   return (
     <NavigationContainer>
       <CategoriesProvider>
+        <CurrencyProvider>
 
-        <Tab.Navigator>
-          <Tab.Screen
-            name="HomeScreen"
-            component={Home}
-            options={{
-              headerShown: false,
-              tabBarActiveTintColor: "darkgreen",
-              tabBarLabel: "Home",
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons
-                  name="piggy-bank-outline"
-                  size={24}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          
-          <Tab.Screen
-            name="OverviewScreen"
-            component={SecondScreen}
-            options={{
-              headerShown: false,
-              tabBarActiveTintColor: "darkgreen",
-              tabBarLabel: "Overview",
-              tabBarIcon: ({ color }) => (
-                <Feather name="pie-chart" size={24} color={color} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+          <Tab.Navigator>
+            <Tab.Screen
+              name="HomeScreen"
+              component={Home}
+              options={{
+                headerShown: false,
+                tabBarActiveTintColor: "darkgreen",
+                tabBarLabel: "Home",
+                tabBarIcon: ({ color }) => (
+                  <MaterialCommunityIcons
+                    name="piggy-bank-outline"
+                    size={24}
+                    color={color}
+                  />
+                ),
+              }}
+            />
+            
+            <Tab.Screen
+              name="OverviewScreen"
+              component={SecondScreen}
+              options={{
+                headerShown: false,
+                tabBarActiveTintColor: "darkgreen",
+                tabBarLabel: "Overview",
+                tabBarIcon: ({ color }) => (
+                  <Feather name="pie-chart" size={24} color={color} />
+                ),
+              }}
+            />
+          </Tab.Navigator>
 
+        </CurrencyProvider>
       </CategoriesProvider>
       
     </NavigationContainer>

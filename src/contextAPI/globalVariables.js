@@ -16,6 +16,24 @@ const month = createContext([
   "December",
 ]);
 
+// Create a new context for passing the currency used to all components
+const CurrencyContext = createContext()
+
+export function useCurrencyContext() {
+  return useContext(CurrencyContext);
+}
+
+export function CurrencyProvider({ children }) {
+
+  const currency = "$"
+
+  return (
+    <CurrencyContext.Provider value={currency}>
+      {children}
+    </CurrencyContext.Provider>
+  );
+}
+
 // Create a new context for passing updated categories list to all components
 const CategoriesContext = createContext();
 
