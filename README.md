@@ -4,7 +4,7 @@ GastoCalc is an App used for tracking expenses and getting a better idea of your
  
 ## Introduction
  
-My name is Jay Atul Shah. I am a high school graduate and, will be starting my computer science degree at Brock University as an international student this fall(2023). For the first time, I am going to find a part-time job and live alone, away from my home. This means I need to be more conscious of my spending habits and keep track of my expenses. This thought process led me to make GastoCalc, an app used to do just that, as a part of my final project for CS50.
+My name is Jay Atul Shah. I am persuing my computer science degree at Brock University as an international student in Canada, meaning I needed to be more conscious of my spending habits and keep track of my expenses. This thought process led me to make GastoCalc, an app used to do just that. This is a contuation of my final project for CS50x - Introduction to Computer Science (https://github.com/jayshah2005/GastoCalc-CS50).
  
 This app was created using the following resources:
  
@@ -13,8 +13,7 @@ This app was created using the following resources:
 - Figma and Canvas for the splash screen and app icon respectively.
 
 ### .APK File Download: <https://link-target.net/220726/gastocalc-app> 
-
-### Video Demo: <https://youtu.be/V32zcLIk4EI>
+(The apk may not be uptodate with the code presented here)
  
  
 ## Set-up
@@ -31,7 +30,7 @@ When a category table is created for the first time, it prepopulates the table w
  
 ### Global Variables (contextAPI/globalVariables.js)
  
-We create a new context for passing the updated category list to all components. These categories are fetched using the getCategory function (function/categoriesFetcher). In the end, we have a global variable, categories, which can be accessed throughout the app.
+We create a new context for passing the updated category list to all components. These categories are fetched using the getCategory function (function/categoriesFetcher). In the end, we have a global variable, categories, which can be accessed throughout the app. Similarly, a global variable is also used for the currency being used in the app.
  
  
 ## Expense Screen (screens/expenses.js)

@@ -74,7 +74,10 @@ const App = () => {
                 tabBarActiveTintColor: "darkgreen",
                 tabBarLabel: "Overview",
                 tabBarIcon: ({ color }) => (
-                  <Feather name="pie-chart" size={24} color={color} />
+                  <Feather 
+                  name="pie-chart" 
+                  size={24} 
+                  color={color} />
                 ),
               }}
             />

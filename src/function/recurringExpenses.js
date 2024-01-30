@@ -49,19 +49,16 @@ function getRecurringExpense() {
 }
 
 function setRecurringDate(recurringInterval, date) {
-  let recurrenceDate;
+
+  // let recurrenceDate = new Date(date.getDate());
 
   if (recurringInterval === "Daily") {
-    recurrenceDate = new Date(date.getTime());
     recurrenceDate.setDate(date.getDate() + 1)
   } else if (recurringInterval === "Monthly") {
-    recurrenceDate = new Date(date.getTime());
     recurrenceDate.setMonth(date.getMonth() + 1);
   } else if (recurringInterval === "Yearly") {
-    recurrenceDate = new Date(date.getTime());
     recurrenceDate.setFullYear(date.getFullYear() + 1);
   } else if (recurringInterval === "Weekly") {
-    recurrenceDate = new Date(date.getTime())
     recurrenceDate.setDate(date.getDate() + 7)
   }
 
